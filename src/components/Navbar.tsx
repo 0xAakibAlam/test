@@ -26,8 +26,12 @@ const Navbar = () => {
     <nav className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between max-w-[92%]">
         <Link to="/app" className="text-xl font-bold flex items-center gap-2">
-          <MessageSquare className="h-6 w-6" />
-          <span>AnonQA</span>
+        <img 
+          src="/AnonQA.png" 
+          alt="AnonQA" 
+          className="h-8 w-8 object-contain" 
+        /> 
+        <span>AnonQA</span>
         </Link>
 
         <div className="flex-1 mx-4">
