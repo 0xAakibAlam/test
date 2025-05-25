@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
+import { MessageSquare } from "lucide-react";
 
 interface QuestionFormProps {
   onQuestionAdded?: () => void;
@@ -39,6 +40,8 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
     
     try {
       await addQuestion({ questionTitle: title.trim(), question: question.trim(), endTime: endTime });
+      setTitle("");
+      setEndTime("");
       setQuestion("");
       toast.success("Question posted successfully!");
       
@@ -86,6 +89,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
               type="submit" 
               disabled={isSubmitting || !wallet.isConnected}
             >
+              <MessageSquare className="h-4 w-4" />
               {isSubmitting ? "Posting..." : "Post Question"}
             </Button>
           </div>

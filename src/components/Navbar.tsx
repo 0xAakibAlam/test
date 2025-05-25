@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, MessageSquare, ArchiveIcon, UserIcon, HelpCircle, Menu } from "lucide-react";
+import { Moon, Sun, ArchiveIcon, UserIcon, HelpCircle, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

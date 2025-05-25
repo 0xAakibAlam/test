@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
+import { MessageSquare } from "lucide-react";
 
 interface AnswerFormProps {
   questionId: string;
@@ -72,6 +73,7 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
               type="submit" 
               disabled={isSubmitting || !wallet.isConnected}
             >
+              <MessageSquare className="h-4 w-4" />
               {isSubmitting ? "Posting..." : "Post Answer"}
             </Button>
           </div>
