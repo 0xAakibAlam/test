@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useWallet } from "@/context/WalletContext";
+import { useAccount } from "wagmi";
 import { addQuestion } from "@/services/dataService";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
   const [question, setQuestion] = useState("");
   const [days, setDays] = useState(7);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { wallet } = useWallet();
+  const { address, isConnected } = useAccount();
 
   const handleDaysChange = (value: number) => {
     if (value >= 1 && value <= 7) {
@@ -28,7 +28,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!wallet.isConnected) {
+    if (!isConnected) {
       toast.error("Please connect your wallet to ask a question");
       return;
     }
@@ -84,21 +84,25 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
             placeholder="Enter Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            disabled={isSubmitting || !wallet.isConnected}
+            disabled={isSubmitting || !isConnected}
           />
           <Textarea
             placeholder="What's on your mind? Ask anything anonymously..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             className="min-h-24"
-            disabled={isSubmitting || !wallet.isConnected}
+            disabled={isSubmitting || !isConnected}
           />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-2 bg-muted/50 px-3 py-2 rounded-md w-fit">
               <span className="text-sm text-muted-foreground whitespace-nowrap">Expires in</span>
               <div className="flex items-center gap-2">
                 <div className="w-12 text-center">
-                  <span className="text-lg font-semibold">{days}</span>
+                  {isConnected ? (
+                    <span className="text-lg text-muted-foreground">{days}</span>
+                    ): (
+                      `- `
+                    )}
                   <span className="text-sm text-muted-foreground ml-1">
                     {days === 1 ? 'day' : 'days'}
                   </span>
@@ -110,7 +114,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
                     size="icon"
                     className="h-5 w-5 p-0 hover:bg-background/80"
                     onClick={() => handleDaysChange(days + 1)}
-                    disabled={days >= 7 || isSubmitting || !wallet.isConnected}
+                    disabled={days >= 7 || isSubmitting || !isConnected}
                   >
                     <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[6px] border-b-foreground" />
                   </Button>
@@ -120,7 +124,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
                     size="icon"
                     className="h-5 w-5 p-0 hover:bg-background/80"
                     onClick={() => handleDaysChange(days - 1)}
-                    disabled={days <= 1 || isSubmitting || !wallet.isConnected}
+                    disabled={days <= 1 || isSubmitting || !isConnected}
                   >
                     <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-foreground" />
                   </Button>
@@ -131,7 +135,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
               <div className="h-[1px] bg-border w-full" />
             </div>
             <div className="pr-8 hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Question will be active until</span>
+            {isConnected && <><span>Question will be active until</span>
               <span className="font-medium">
                 {new Date(Date.now() + days * 24 * 60 * 60 * 1000).toLocaleString(undefined, {
                   year: 'numeric',
@@ -141,11 +145,13 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
                   minute: '2-digit'
                 })}
               </span>
+              </>}
             </div>
             <Button 
               type="submit" 
-              disabled={isSubmitting || !wallet.isConnected}
-              className="w-full sm:w-auto"
+              variant="outline"
+              disabled={isSubmitting || !isConnected}
+              className="w-full sm:w-auto bg-secondary/100 hover:bg-secondary/150"
             >
               <MessageSquare className="h-4 w-4 mr-2" />
               {isSubmitting ? "Posting..." : "Post Question"}

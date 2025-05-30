@@ -3,7 +3,6 @@ import Navbar from "@/components/Navbar";
 import QuestionForm from "@/components/QuestionForm";
 import QuestionCard from "@/components/QuestionCard";
 import { getActiveQuestions } from "@/services/dataService";
-import { useWallet } from "@/context/WalletContext";
 import { Question } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Input } from "@/components/ui/input";
@@ -15,7 +14,6 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const { wallet } = useWallet();
 
   const fetchQuestions = async () => {
     setIsLoading(true);
@@ -99,9 +97,6 @@ const HomePage = () => {
         ) : (
           <div className="text-center py-10">
             <p className="text-muted-foreground mb-4">No questions found</p>
-            {!wallet.isConnected && (
-              <p>Connect your wallet to ask the first question!</p>
-            )}
           </div>
         )}
       </main>

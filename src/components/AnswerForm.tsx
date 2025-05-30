@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useWallet } from "@/context/WalletContext";
+import { useAccount } from "wagmi";
 import { addAnswer } from "@/services/dataService";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +16,7 @@ interface AnswerFormProps {
 const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { wallet } = useWallet();
+  const { address, isConnected } = useAccount();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +26,7 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
       return;
     }
     
-    if (!wallet.isConnected) {
+    if (!isConnected) {
       toast.error("Please connect your wallet to post an answer");
       return;
     }
@@ -38,7 +38,7 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
       await addAnswer({ 
         questionId, 
         answer: answer.trim() 
-      }, wallet.address);
+      }, address);
       
       setAnswer("");
       toast.success("Answer posted successfully!");
@@ -66,12 +66,14 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
             className="mb-4 min-h-24"
-            disabled={isSubmitting || !wallet.isConnected}
+            disabled={isSubmitting || !isConnected}
           />
           <div className="flex justify-end">
             <Button 
               type="submit" 
-              disabled={isSubmitting || !wallet.isConnected}
+              variant="outline"
+              className="bg-secondary/100 hover:bg-secondary/150"
+              disabled={isSubmitting || !isConnected}
             >
               <MessageSquare className="h-4 w-4" />
               {isSubmitting ? "Posting..." : "Post Answer"}

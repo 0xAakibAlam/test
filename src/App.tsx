@@ -10,7 +10,6 @@ import MyQuestionsPage from "@/pages/MyQuestionsPage";
 import MyAnswersPage from "@/pages/MyAnswersPage";
 import ArchivePage from "@/pages/ArchivePage";
 import NotFound from "@/pages/NotFound";
-import { WalletProvider } from "@/context/WalletContext";
 
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
@@ -31,7 +30,6 @@ const App = () => (
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
       <RainbowKitProvider>
-        <WalletProvider>
           <TooltipProvider>
             <AppLayout>
               <Toaster />
@@ -49,7 +47,6 @@ const App = () => (
               </BrowserRouter>
             </AppLayout>
           </TooltipProvider>
-        </WalletProvider>
       </RainbowKitProvider>
     </QueryClientProvider>
   </WagmiProvider>

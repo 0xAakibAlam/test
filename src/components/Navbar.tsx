@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { useWallet } from "@/context/WalletContext";
+import { CustomConnectButton } from './ConnectButton';
+import { useAccount } from "wagmi";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, ArchiveIcon, UserIcon, HelpCircle, Menu } from "lucide-react";
+import { Moon, Sun, ArchiveIcon, HelpCircle, Menu, HomeIcon, BookOpen } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,13 +20,13 @@ import {
 } from "@/components/ui/navigation-menu";
 
 const Navbar = () => {
-  const { wallet, CustomConnectButton } = useWallet();
+  const { isConnected } = useAccount();
   const { theme, toggleTheme } = useTheme();
 
   return (
     <nav className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between max-w-[92%]">
-        <Link to="/app" className="text-xl font-bold flex items-center gap-2">
+        <Link to="/" className="text-xl font-bold flex items-center gap-2">
         <img 
           src="/AnonQA.png" 
           alt="AnonQA" 
@@ -37,12 +38,20 @@ const Navbar = () => {
         <div className="flex-1 mx-4">
           <NavigationMenu className="float-right hidden md:flex">
             <NavigationMenuList>
-              {wallet.isConnected && (
+              <NavigationMenuItem>
+                <Link to="/app">
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    <HomeIcon className="mr-2 h-4 w-4" />
+                    Home
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              {isConnected && (
                 <>
                   <NavigationMenuItem>
                     <Link to="/app/my-questions">
                       <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                        <UserIcon className="mr-2 h-4 w-4" />
+                        <HelpCircle className="mr-2 h-4 w-4" />
                         My Questions
                       </NavigationMenuLink>
                     </Link>
@@ -50,7 +59,7 @@ const Navbar = () => {
                   <NavigationMenuItem>
                     <Link to="/app/my-answers">
                       <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                        <HelpCircle className="mr-2 h-4 w-4" />
+                        <BookOpen className="mr-2 h-4 w-4" />
                         My Answers
                       </NavigationMenuLink>
                     </Link>
@@ -90,17 +99,23 @@ const Navbar = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            {wallet.isConnected && (
+            <DropdownMenuItem asChild>
+              <Link to="/app" className="cursor-pointer w-full">
+                <HomeIcon className="mr-2 h-4 w-4" />
+                Home
+              </Link>
+            </DropdownMenuItem>
+            {isConnected && (
               <>
                 <DropdownMenuItem asChild>
                   <Link to="/app/my-questions" className="cursor-pointer w-full">
-                    <UserIcon className="mr-2 h-4 w-4" />
+                    <HelpCircle className="mr-2 h-4 w-4" />
                     My Questions
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/app/my-answers" className="cursor-pointer w-full">
-                    <HelpCircle className="mr-2 h-4 w-4" />
+                    <BookOpen className="mr-2 h-4 w-4" />
                     My Answers
                   </Link>
                 </DropdownMenuItem>

@@ -2,13 +2,10 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { getUserAnswers, getQuestionById } from "@/services/dataService";
-import { Answer, Question } from "@/types";
-import { useWallet } from "@/context/WalletContext";
+import { Answer } from "@/types";
+import { useAccount } from "wagmi"
 import { toast } from "@/components/ui/sonner";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 
 interface AnswerWithQuestion extends Answer {
   questionText?: string;
@@ -17,18 +14,18 @@ interface AnswerWithQuestion extends Answer {
 const MyAnswersPage = () => {
   const [answers, setAnswers] = useState<AnswerWithQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { wallet } = useWallet();
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
     const fetchUserAnswers = async () => {
-      if (!wallet.isConnected) {
+      if (!isConnected) {
         setIsLoading(false);
         return;
       }
       
       setIsLoading(true);
       try {
-        const answersData = await getUserAnswers(wallet.address);
+        const answersData = await getUserAnswers(address);
         
         // Fetch the question text for each answer
         const answersWithQuestions = await Promise.all(
@@ -59,7 +56,7 @@ const MyAnswersPage = () => {
     };
 
     fetchUserAnswers();
-  }, [wallet]);
+  }, [address, isConnected]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -68,10 +65,9 @@ const MyAnswersPage = () => {
 
         <h1 className="text-3xl font-bold mb-6">My Answers</h1>
 
-        {!wallet.isConnected ? (
+        {!isConnected ? (
           <div className="text-center py-10">
             <p className="text-muted-foreground mb-4">Please connect your wallet to view my answers</p>
-            <Button onClick={() => window.scrollTo(0, 0)}>Connect Wallet</Button>
           </div>
         ) : isLoading ? (
           <div className="flex justify-center items-center py-10">
@@ -101,9 +97,6 @@ const MyAnswersPage = () => {
         ) : (
           <div className="text-center py-10">
             <p className="text-muted-foreground mb-4">You haven't answered any questions yet</p>
-            <Link to="/app">
-              <Button>Browse Questions</Button>
-            </Link>
           </div>
         )}
       </main>

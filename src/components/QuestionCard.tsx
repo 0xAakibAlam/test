@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/sonner";
-import { useWallet } from "@/context/WalletContext";
+import { useAccount } from "wagmi";
 import { Textarea } from "@/components/ui/textarea";
 
 interface QuestionCardProps {
@@ -21,7 +21,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAnswerOverlay, setShowAnswerOverlay] = useState(false);
-  const { wallet } = useWallet();
+  const { address, isConnected } = useAccount();
 
   const handleAnswerSubmit = async () => {
     if (!answer.trim()) {
@@ -29,7 +29,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
       return;
     }
     
-    if (!wallet.isConnected) {
+    if (!isConnected) {
       toast.error("Please connect your wallet to post an answer");
       return;
     }
@@ -40,7 +40,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
       await addAnswer({ 
         questionId: question.questionId, 
         answer: answer.trim() 
-      }, wallet.address);
+      }, address);
       
       setAnswer("");
       setShowAnswerOverlay(false);
@@ -106,7 +106,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
             className="min-h-[200px]"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            disabled={isSubmitting || !wallet.isConnected}
+            disabled={isSubmitting || !isConnected}
           />
         </CardContent>
 
@@ -121,9 +121,9 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
             </Button>
           </Link>
           <Button 
-            variant="default" 
-            className="flex items-center gap-2 flex-1 justify-center"
-            disabled={isSubmitting || !wallet.isConnected}
+            variant="outline" 
+            className="flex items-center gap-2 flex-1 justify-center bg-secondary/100 hover:bg-secondary/150"
+            disabled={isSubmitting || !isConnected}
             onClick={handleAnswerSubmit}
           >
             <MessageSquare className="h-4 w-4" />
@@ -178,9 +178,9 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
               </Link>
               {!question.sentToHeaven && (
                 <Button 
-                  variant="default" 
-                  className="flex items-center gap-2 flex-1 justify-center"
-                  disabled={!wallet.isConnected}
+                  variant="outline"
+                  className="flex items-center gap-2 flex-1 justify-center bg-secondary/100 hover:bg-secondary/150"
+                  disabled={!isConnected}
                   onClick={handleOpenAnswerOverlay}
                 >
                   <MessageSquare className="h-4 w-4" />

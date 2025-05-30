@@ -1,12 +1,10 @@
-
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import QuestionCard from "@/components/QuestionCard";
 import { getUserQuestions } from "@/services/dataService";
 import { Question } from "@/types";
-import { useWallet } from "@/context/WalletContext";
+import { useAccount } from "wagmi";
 import { toast } from "@/components/ui/sonner";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown } from "lucide-react";
@@ -16,18 +14,18 @@ const MyQuestionsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const { wallet } = useWallet();
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
     const fetchUserQuestions = async () => {
-      if (!wallet.isConnected) {
+      if (!isConnected) {
         setIsLoading(false);
         return;
       }
       
       setIsLoading(true);
       try {
-        const data = await getUserQuestions(wallet.address);
+        const data = await getUserQuestions(address);
         setQuestions(data);
       } catch (error) {
         console.error("Error fetching user questions:", error);
@@ -38,7 +36,7 @@ const MyQuestionsPage = () => {
     };
 
     fetchUserQuestions();
-  }, [wallet]);
+  }, [address, isConnected]);
 
   // Filter questions based on search term
   const filteredQuestions = questions.filter(question => 
@@ -85,10 +83,9 @@ const MyQuestionsPage = () => {
           </Button>
         </div>
 
-        {!wallet.isConnected ? (
+        {!isConnected ? (
           <div className="text-center py-10">
             <p className="text-muted-foreground mb-4">Please connect your wallet to view my questions</p>
-            <Button onClick={() => window.scrollTo(0, 0)}>Connect Wallet</Button>
           </div>
         ) : isLoading ? (
           <div className="flex justify-center items-center py-10">
@@ -101,12 +98,7 @@ const MyQuestionsPage = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-10">
-            <p className="text-muted-foreground mb-4">You haven't asked any questions yet</p>
-            <Link to="/app">
-              <Button>Ask a Question</Button>
-            </Link>
-          </div>
+          <></>
         )}
       </main>
     </div>
