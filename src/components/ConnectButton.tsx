@@ -1,6 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
+import { Wallet } from "lucide-react";
 
 export const CustomConnectButton = () => {
   return (
@@ -54,8 +54,8 @@ export const CustomConnectButton = () => {
               variant="default"
               className="flex items-center gap-2"
             >
-              <User className="h-4 w-4" />
-              <span>Connect Wallet</span>
+              <Wallet className="h-4 w-4" />
+              <span className='text-xs sm:text-sm'>Connect Wallet</span>
             </Button>
           );
         }
@@ -69,8 +69,8 @@ export const CustomConnectButton = () => {
             variant="default"
             className="flex items-center gap-2"
           >
-            <User className="h-4 w-4" />
-            <span className="hidden sm:inline">
+            <Wallet className="h-4 w-4" />
+            <span>
               {account.displayName}
             </span>
           </Button>

@@ -54,26 +54,26 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container w-5/6 px-4 py-6 max-w-[85%]">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
         <QuestionForm onQuestionAdded={fetchQuestions} />
 
-        <h2 className="text-2xl font-bold mb-4">Active Questions</h2>
+        <h2 className="text-xl sm:text-2xl font-bold mb-4">Active Questions</h2>
 
-        <div className="relative mb-6 flex items-center gap-2">
+        <div className="relative mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search questions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 w-full"
             />
           </div>
           <Button 
             variant="ghost" 
             size="sm" 
-            className="h-8 w-8 p-0 hover:bg-transparent"
+            className="h-10 w-full sm:w-10 p-0 hover:bg-transparent"
             onClick={toggleSort}
           >
             <ArrowUpDown className="h-4 w-4" />
@@ -85,7 +85,7 @@ const HomePage = () => {
             <div className="animate-pulse text-muted-foreground">Loading questions...</div>
           </div>
         ) : sortedAndFilteredQuestions.length > 0 ? (
-          <div>
+          <div className="grid gap-4">
             {sortedAndFilteredQuestions.map((question) => (
               <QuestionCard key={question.questionId} question={question} />
             ))}

@@ -10,7 +10,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <ThemeProvider>
         <div className="min-h-screen flex flex-col">
-          <main className="flex-1">
+          <main className="flex-1 w-full max-w-[100vw] overflow-x-hidden">
             {children}
           </main>
           <Footer />

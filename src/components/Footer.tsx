@@ -40,7 +40,7 @@ const Footer = () => {
     <footer className="w-full border-t bg-background">
       <div className="container mx-auto px-4">
         <div className="py-6 sm:py-8">
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-6 md:gap-8 lg:gap-12">
             {socialLinks.map((link, index) => (
               <a
                 key={index}
