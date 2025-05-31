@@ -14,13 +14,13 @@ import NotFound from "@/pages/NotFound";
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
-import { mainnet, polygonAmoy } from 'wagmi/chains';
+import { mainnet, sepolia } from 'wagmi/chains';
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const config = getDefaultConfig({
     appName: 'Anonqa',
     projectId: import.meta.env.VITE_WAGMI_PROJECT_ID,
-    chains: [mainnet, polygonAmoy],
+    chains: [mainnet, sepolia],
     ssr: true,
 });
 
@@ -30,7 +30,7 @@ const App = () => (
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
       <RainbowKitProvider 
-      initialChain={polygonAmoy}
+      initialChain={sepolia}
       >
           <TooltipProvider>
             <AppLayout>

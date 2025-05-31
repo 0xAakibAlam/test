@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { addAnswer } from "@/services/dataService";
+import { addAnswer } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

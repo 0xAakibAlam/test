@@ -5,7 +5,7 @@ import { MulticallWrapper } from "ethers-multicall-provider";
 
 function createMultiCallProvider() {
   const provider = new ethers.JsonRpcProvider(
-    `https://polygon-amoy.core.chainstack.com/${import.meta.env.VITE_CHAINSTACK_ENDPOINT}`
+    `https://ethereum-sepolia-rpc.publicnode.com`
   );
   return MulticallWrapper.wrap(provider as any);
 }

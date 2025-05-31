@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Question } from "@/types";
-import { addAnswer } from "@/services/dataService";
+import { addAnswer } from "@/services/AnonqaService";
 import { formatDistanceToNow } from "date-fns";
 import { Eye, ChevronDown, MessageSquare, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
       await addAnswer({ 
         questionId: question.questionId, 
         answer: answer.trim() 
-      }, address);
+      });
       
       setAnswer("");
       setShowAnswerOverlay(false);

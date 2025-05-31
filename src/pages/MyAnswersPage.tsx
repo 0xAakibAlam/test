@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import { getUserAnswers, getQuestionById } from "@/services/dataService";
+import { getUserAnswers, getQuestionById } from "@/services/AnonqaService";
 import { Answer } from "@/types";
 import { useAccount } from "wagmi"
 import { toast } from "@/components/ui/sonner";

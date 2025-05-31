@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import QuestionCard from "@/components/QuestionCard";
-import { getUserQuestions } from "@/services/dataService";
+import { getUserQuestions } from "@/services/AnonqaService";
 import { Question } from "@/types";
 import { useAccount } from "wagmi";
 import { toast } from "@/components/ui/sonner";

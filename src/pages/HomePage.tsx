@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import QuestionForm from "@/components/QuestionForm";
 import QuestionCard from "@/components/QuestionCard";
-import { getActiveQuestions } from "@/services/dataService";
+import { getActiveQuestions } from "@/services/AnonqaService";
 import { Question } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Input } from "@/components/ui/input";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAccount } from "wagmi";
-import { addQuestion } from "@/services/dataService";
+import { addQuestion } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";

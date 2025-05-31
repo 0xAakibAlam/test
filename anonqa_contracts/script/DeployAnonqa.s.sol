@@ -31,7 +31,7 @@ contract DeployAnonqa is Script {
         // MasterAnonqa masterAnonqaImpl = new MasterAnonqa();
         // TransparentUpgradeableProxy masterAnonqaProxy =
         //     new TransparentUpgradeableProxy(address(masterAnonqaImpl), address(proxyAdmin), "");
-        // masterAnonqa = MasterAnonqa(address(masterAnonqaProxy));
+        masterAnonqa = MasterAnonqa(0x6578C29E33c9e9f4882585Fd6a485c1ff83E8F37);
         // masterAnonqa.__MasterQA_Init(address(anonqaConfig), 7 days);
 
         // anonqaConfig.grantRole(AnonqaConstants.BOT_ROLE, 0xEBA436aE4012D8194a5b44718a8ba6ec553241bE);
@@ -47,27 +47,27 @@ contract DeployAnonqa is Script {
         // console2.log("Admin role: ", anonqaConfig.hasRole(AnonqaConstants.DEFAULT_ADMIN_ROLE, 0xEBA436aE4012D8194a5b44718a8ba6ec553241bE));
         // console2.log("Bot role: ", anonqaConfig.hasRole(AnonqaConstants.BOT_ROLE, 0xEBA436aE4012D8194a5b44718a8ba6ec553241bE));
 
-        // bytes32 questionId1 = masterAnonqa.postQuestion("Q1", "Testing... 0", block.timestamp + 6 days);
-        // bytes32 questionId2 = masterAnonqa.postQuestion("Q2", "Testing... 1", block.timestamp + 6 days);
+        bytes32 questionId1 = masterAnonqa.postQuestion("Q1", "Testing... 0", block.timestamp + 6 days);
+        bytes32 questionId2 = masterAnonqa.postQuestion("Q2", "Testing... 1", block.timestamp + 6 days);
 
-        // console2.logBytes32(questionId1);
-        // console2.logBytes32(questionId2);
+        console2.logBytes32(questionId1);
+        console2.logBytes32(questionId2);
 
-        // console2.logBytes32(masterAnonqa.postAnswer(questionId1, "testing."));
+        console2.logBytes32(masterAnonqa.postAnswer(questionId1, "testing."));
         // console2.logBytes32(masterAnonqa.postAnswer(questionId1, "testing.."));
         
-        // console2.logBytes32(masterAnonqa.postAnswer(questionId2, "testing...."));
+        console2.logBytes32(masterAnonqa.postAnswer(questionId2, "testing...."));
         // console2.logBytes32(masterAnonqa.postAnswer(questionId2, "testing..."));
 
         // 0xfa8f3168ed2b7e1dac72b0f5df90a57c1aefe2cc65783a384801e5b155fe4c9a
         // 0x2e2ec360171b4183a78491ce935180ef416791586849baf2a76214093679a9e6
 
-        masterAnonqa = MasterAnonqa(0x8901298c6a163Db4B479E9cEEa1b65a49f2c6EF7);
+        // masterAnonqa = MasterAnonqa(0x8901298c6a163Db4B479E9cEEa1b65a49f2c6EF7);
 
-        bytes32[] memory questionIds = new bytes32[](2);
-        questionIds[0] = 0xfa8f3168ed2b7e1dac72b0f5df90a57c1aefe2cc65783a384801e5b155fe4c9a;
-        questionIds[1] = 0x2e2ec360171b4183a78491ce935180ef416791586849baf2a76214093679a9e6;
-        masterAnonqa.funeral(questionIds);
+        // bytes32[] memory questionIds = new bytes32[](2);
+        // questionIds[0] = 0xfa8f3168ed2b7e1dac72b0f5df90a57c1aefe2cc65783a384801e5b155fe4c9a;
+        // questionIds[1] = 0x2e2ec360171b4183a78491ce935180ef416791586849baf2a76214093679a9e6;
+        // masterAnonqa.funeral(questionIds);
 
         vm.stopBroadcast();
     }

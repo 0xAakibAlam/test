@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import QuestionCard from "@/components/QuestionCard";
-import { getArchivedQuestions } from "@/services/dataService";
+import { getArchivedQuestions } from "@/services/AnonqaService";
 import { Question } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";

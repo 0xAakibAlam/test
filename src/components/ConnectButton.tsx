@@ -28,8 +28,8 @@ export const CustomConnectButton = () => {
             />
           );
         }
-        
-        if (connected && chain.name !== "Polygon Amoy") {
+
+        if (connected && chain.id !== 11155111) {
           return (
             <Button 
               onClick={(e) => {

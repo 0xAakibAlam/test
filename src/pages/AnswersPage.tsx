@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import AnswerForm from "@/components/AnswerForm";
-import { getQuestionById, getAnswersForQuestion } from "@/services/dataService";
+import { getQuestionById, getAnswersForQuestion } from "@/services/AnonqaService";
 import { Question, Answer } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
