@@ -121,8 +121,8 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
             </Button>
           </Link>
           <Button 
-            variant="outline" 
-            className="flex items-center gap-2 flex-1 justify-center bg-secondary/100 hover:bg-secondary/150"
+            variant="default" 
+            className="flex items-center gap-2 flex-1 justify-center"
             disabled={isSubmitting || !isConnected}
             onClick={handleAnswerSubmit}
           >
@@ -178,8 +178,8 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
               </Link>
               {!question.sentToHeaven && (
                 <Button 
-                  variant="outline"
-                  className="flex items-center gap-2 flex-1 justify-center bg-secondary/100 hover:bg-secondary/150"
+                  variant="default"
+                  className="flex items-center gap-2 flex-1 justify-center"
                   disabled={!isConnected}
                   onClick={handleOpenAnswerOverlay}
                 >

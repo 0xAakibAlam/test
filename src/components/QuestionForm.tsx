@@ -149,9 +149,9 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
             </div>
             <Button 
               type="submit" 
-              variant="outline"
+              variant="default"
               disabled={isSubmitting || !isConnected}
-              className="w-full sm:w-auto bg-secondary/100 hover:bg-secondary/150"
+              className="w-full sm:w-auto"
             >
               <MessageSquare className="h-4 w-4 mr-2" />
               {isSubmitting ? "Posting..." : "Post Question"}

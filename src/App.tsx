@@ -19,17 +19,19 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 const config = getDefaultConfig({
     appName: 'Anonqa',
-    projectId: 'ed566083900c4993d780403cd5d1fe74',
+    projectId: import.meta.env.VITE_WAGMI_PROJECT_ID,
     chains: [mainnet, polygonAmoy],
     ssr: true,
-  });
+});
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider>
+      <RainbowKitProvider 
+      initialChain={polygonAmoy}
+      >
           <TooltipProvider>
             <AppLayout>
               <Toaster />

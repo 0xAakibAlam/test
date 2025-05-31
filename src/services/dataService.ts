@@ -1,12 +1,21 @@
 import { Question, Answer } from "@/types";
 import { masterAnonqaAddress, masterAnonqaABI } from "@/contracts/MasterAnonqa";
 import { ethers } from "ethers";
+import { MulticallWrapper } from "ethers-multicall-provider";
+
+function createMultiCallProvider() {
+  const provider = new ethers.JsonRpcProvider(
+    `https://polygon-amoy.core.chainstack.com/${import.meta.env.VITE_CHAINSTACK_ENDPOINT}`
+  );
+  return MulticallWrapper.wrap(provider as any);
+}
 
 async function getContract(contractAddress, contractABI) {
-  const provider = new ethers.BrowserProvider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
-  const signer = await provider.getSigner();
-  const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
+  const contractInstance = new ethers.Contract(
+    contractAddress,
+    contractABI,
+    createMultiCallProvider()
+  );
   return contractInstance;
 }
 

@@ -71,8 +71,7 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
           <div className="flex justify-end">
             <Button 
               type="submit" 
-              variant="outline"
-              className="bg-secondary/100 hover:bg-secondary/150"
+              variant="default"
               disabled={isSubmitting || !isConnected}
             >
               <MessageSquare className="h-4 w-4" />

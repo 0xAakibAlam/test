@@ -28,8 +28,8 @@ export const CustomConnectButton = () => {
             />
           );
         }
-
-        if (connected && chain.unsupported) {
+        
+        if (connected && chain.name !== "Polygon Amoy") {
           return (
             <Button 
               onClick={(e) => {
@@ -37,7 +37,7 @@ export const CustomConnectButton = () => {
                 openChainModal();
               }} 
               variant="destructive"
-              className="flex items-center gap-2 bg-secondary/100 hover:bg-secondary/150"
+              className="flex items-center gap-2"
             >
               Wrong network
             </Button>
@@ -51,8 +51,8 @@ export const CustomConnectButton = () => {
                 e.preventDefault();
                 openConnectModal();
               }} 
-              variant="outline"
-              className="flex items-center gap-2 bg-secondary/100 hover:bg-secondary/150"
+              variant="default"
+              className="flex items-center gap-2"
             >
               <User className="h-4 w-4" />
               <span>Connect Wallet</span>
@@ -66,8 +66,8 @@ export const CustomConnectButton = () => {
               e.preventDefault();
               openAccountModal();
             }} 
-            variant="outline"
-            className="flex items-center gap-2 bg-secondary/100 hover:bg-secondary/150"
+            variant="default"
+            className="flex items-center gap-2"
           >
             <User className="h-4 w-4" />
             <span className="hidden sm:inline">
