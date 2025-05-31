@@ -38,7 +38,7 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
       await addAnswer({ 
         questionId, 
         answer: answer.trim() 
-      }, address);
+      });
       
       setAnswer("");
       toast.success("Answer posted successfully!");

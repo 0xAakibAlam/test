@@ -10,7 +10,7 @@ function createMultiCallProvider() {
   return MulticallWrapper.wrap(provider as any);
 }
 
-async function getContract(contractAddress, contractABI) {
+async function getReadOnlyContract(contractAddress, contractABI) {
   const contractInstance = new ethers.Contract(
     contractAddress,
     contractABI,
@@ -19,11 +19,19 @@ async function getContract(contractAddress, contractABI) {
   return contractInstance;
 }
 
+async function getContract(contractAddress, contractABI) {
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  const signer = await provider.getSigner();
+  const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
+  return contractInstance;
+}
+
 // Question service functions
 export const getActiveQuestions = async (): Promise<Question[]> => {
   try {
     console.log("getting contract...");
-    const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
     console.log("contract fetched...");
     const numOfQuestion = await masterAnonqa.totalQuestions();
     console.log("total questions: ", numOfQuestion);
@@ -56,7 +64,7 @@ export const getActiveQuestions = async (): Promise<Question[]> => {
 
 export const getQuestionById = async (id: string): Promise<Question | undefined> => {
   try {
-    const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
     const questionInfo = await masterAnonqa.getQuestionInfo(id);
     
     return {
@@ -75,7 +83,7 @@ export const getQuestionById = async (id: string): Promise<Question | undefined>
 
 export const getUserQuestions = async (owner: string): Promise<Question[]> => {
   try {
-    const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
     const numOfQuestion = await masterAnonqa.totalQuestions();
     console.log(numOfQuestion);
 
@@ -104,7 +112,7 @@ export const getUserQuestions = async (owner: string): Promise<Question[]> => {
 
 export const getArchivedQuestions = async (): Promise<Question[]> => {
   try {
-    const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
     const numOfQuestion = await masterAnonqa.totalQuestions();
     console.log(numOfQuestion);
 
@@ -135,9 +143,24 @@ export const getArchivedQuestions = async (): Promise<Question[]> => {
 export const addQuestion = async (questionData: { questionTitle: string, question: string, endTime: string }) => {
   try {
     const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    
+    const gasLimit = await masterAnonqa.postQuestion.estimateGas(
+      questionData.questionTitle,
+      questionData.question,
+      questionData.endTime
+    );
+    const estimatedGas = gasLimit * BigInt(15) / BigInt(10);
 
-    const tx = await masterAnonqa.postQuestion(questionData.questionTitle, questionData.question, questionData.endTime);
+    console.log("question: ", questionData);
+    console.log("estimatedGas: ", estimatedGas);
+    const tx = await masterAnonqa.postQuestion(
+      questionData.questionTitle,
+      questionData.question,
+      questionData.endTime,
+      {gasLimit: estimatedGas}
+    );
     await tx.wait();
+
   } catch (error) {
     console.error("Error in addQuestion:", error);
     throw error;
@@ -147,7 +170,7 @@ export const addQuestion = async (questionData: { questionTitle: string, questio
 // Answer service functions
 export const getAnswersForQuestion = async (questionId: string): Promise<Answer[]> => {
   try {
-    const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
     const answerInfos = await masterAnonqa.getAnswerInfo(questionId);
     
     return answerInfos.map(a => ({
@@ -164,7 +187,7 @@ export const getAnswersForQuestion = async (questionId: string): Promise<Answer[
 
 export const getUserAnswers = async (owner: string): Promise<Answer[]> => {
   try {
-    const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
     const numOfQuestion = await masterAnonqa.totalQuestions();
     console.log(numOfQuestion);
 
@@ -193,11 +216,20 @@ export const getUserAnswers = async (owner: string): Promise<Answer[]> => {
   }
 };
 
-export const addAnswer = async (answerData: { questionId: string, answer: string }, owner: string) => {
+export const addAnswer = async (answerData: { questionId: string, answer: string }) => {
   try {
     const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
-
-    const tx = await masterAnonqa.postAnswer(answerData.questionId, answerData.answer);
+    
+    const gasLimit = await masterAnonqa.postAnswer.estimateGas(
+      answerData.questionId,
+      answerData.answer
+    );
+    const estimatedGas = gasLimit * BigInt(15) / BigInt(10);
+    const tx = await masterAnonqa.postAnswer(
+      answerData.questionId,
+      answerData.answer,
+      {gasLimit: estimatedGas}
+    );
     await tx.wait();
     
   } catch (error) {
