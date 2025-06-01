@@ -43,8 +43,8 @@ createAppKit({
   themeVariables: {
     '--w3m-accent': '#0059b3',
     '--w3m-font-family': "'Arial', sans-serif",
-    '--w3m-color-mix': '#000000',
-    '--w3m-color-mix-strength': 40,
+    '--w3m-color-mix': '#ffffff',
+    '--w3m-color-mix-strength': 0,
     '--w3m-font-size-master': '11px',
     '--w3m-border-radius-master': '1px',
     '--w3m-z-index': 1000,
