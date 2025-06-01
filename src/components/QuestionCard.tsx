@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/sonner";
-import { useAccount } from "wagmi";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { Textarea } from "@/components/ui/textarea";
 
 interface QuestionCardProps {
@@ -21,7 +21,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAnswerOverlay, setShowAnswerOverlay] = useState(false);
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useAppKitAccount();
 
   const handleAnswerSubmit = async () => {
     if (!answer.trim()) {

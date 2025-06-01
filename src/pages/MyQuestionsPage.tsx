@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import QuestionCard from "@/components/QuestionCard";
 import { getUserQuestions } from "@/services/AnonqaService";
 import { Question } from "@/types";
-import { useAccount } from "wagmi";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ const MyQuestionsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useAppKitAccount();
 
   useEffect(() => {
     const fetchUserQuestions = async () => {

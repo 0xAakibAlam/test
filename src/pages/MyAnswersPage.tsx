@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { getUserAnswers, getQuestionById } from "@/services/AnonqaService";
 import { Answer } from "@/types";
-import { useAccount } from "wagmi"
+import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -14,7 +14,7 @@ interface AnswerWithQuestion extends Answer {
 const MyAnswersPage = () => {
   const [answers, setAnswers] = useState<AnswerWithQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useAppKitAccount();
 
   useEffect(() => {
     const fetchUserAnswers = async () => {

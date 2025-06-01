@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { addAnswer } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,7 +16,7 @@ interface AnswerFormProps {
 const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAppKitAccount();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

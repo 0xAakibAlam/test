@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAccount } from "wagmi";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { addQuestion } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
   const [question, setQuestion] = useState("");
   const [days, setDays] = useState(7);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAppKitAccount();
 
   const handleDaysChange = (value: number) => {
     if (value >= 1 && value <= 7) {

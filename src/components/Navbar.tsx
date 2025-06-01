@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { CustomConnectButton } from './ConnectButton';
-import { useAccount } from "wagmi";
+import { useAppKitAccount } from "@reown/appkit/react";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, ArchiveIcon, HelpCircle, Menu, HomeIcon, BookOpen } from "lucide-react";
@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/navigation-menu";
 
 const Navbar = () => {
-  const { isConnected } = useAccount();
+  const { isConnected } = useAppKitAccount();
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -83,9 +83,7 @@ const Navbar = () => {
             </NavigationMenu>
           </div>
 
-          {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            {/* Always visible wallet connect button */}
             <div className="flex-shrink-0">
               <CustomConnectButton />
             </div>
@@ -100,12 +98,9 @@ const Navbar = () => {
               {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </Button>
 
-            {/* Mobile Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="md:hidden">
-                {/* <Button variant="ghost" size="icon" > */}
                   <Menu className="h-8 w-8" />
-                {/* </Button> */}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem asChild>
