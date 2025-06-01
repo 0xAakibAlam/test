@@ -6,6 +6,13 @@ import { Answer } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AnswerWithQuestion extends Answer {
   questionText?: string;
@@ -61,14 +68,24 @@ const MyAnswersPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container w-5/6 px-4 py-6">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
 
-        <h1 className="text-3xl font-bold mb-6">My Answers</h1>
+      <div className="flex items-center gap-2 mb-6">
+        <h1 className="text-3xl font-bold">My Answers</h1>
+        <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="h-5 w-5 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Please connect your wallet to view my answers</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+      </div>
 
         {!isConnected ? (
-          <div className="text-center py-10">
-            <p className="text-muted-foreground mb-4">Please connect your wallet to view my answers</p>
-          </div>
+          <></>
         ) : isLoading ? (
           <div className="flex justify-center items-center py-10">
             <div className="w-full space-y-4">

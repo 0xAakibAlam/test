@@ -141,8 +141,8 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
           <CollapsibleTrigger asChild>
             <div className="cursor-pointer">
               <CardHeader className="pb-2">
-                <div className="grid grid-cols-10 gap-4 items-center">
-                  <div className="col-span-9">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
                     <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
                       {question.questionTitle}
                     </CardTitle>
@@ -150,7 +150,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
                       {formatDistanceToNow(new Date(parseInt(question.endTime) * 1000), { addSuffix: true })}
                     </div>
                   </div>
-                  <div className="col-span-1 flex justify-end">
+                  <div className="flex-shrink-0 flex items-center">
                     <ChevronDown className={cn(
                       "h-5 w-5 text-muted-foreground transition-transform duration-200",
                       isOpen && "transform rotate-180"
@@ -166,8 +166,8 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
               {renderQuestionContent()}
             </CardContent>
             
-            <CardFooter className="flex gap-4 pt-0 pb-6 px-6">
-              <Link to={`/app/question/${question.questionId}`} className="flex-1">
+            <CardFooter className="flex flex-col sm:flex-row gap-4 pt-0 pb-6 px-6">
+              <Link to={`/app/question/${question.questionId}`} className="w-full">
                 <Button 
                   variant="outline" 
                   className="flex items-center gap-2 w-full justify-center"
@@ -179,7 +179,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
               {!question.sentToHeaven && (
                 <Button 
                   variant="default"
-                  className="flex items-center gap-2 flex-1 justify-center"
+                  className="flex items-center gap-2 w-full justify-center"
                   disabled={!isConnected}
                   onClick={handleOpenAnswerOverlay}
                 >

@@ -53,30 +53,9 @@ const ArchivePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container w-5/6 px-4 py-6">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
 
         <h1 className="text-3xl font-bold mb-6">Archived Questions</h1>
-
-        <div className="relative mb-6 flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search questions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0 hover:bg-transparent"
-            onClick={toggleSort}
-          >
-            <ArrowUpDown className="h-4 w-4" />
-          </Button>
-        </div>
         
         {isLoading ? (
           <div className="flex justify-center items-center py-10">
@@ -97,15 +76,31 @@ const ArchivePage = () => {
               ))}
             </div>
           </div>
-        ) : questions.length > 0 ? (
+        ) : (
           <div>
-            {questions.map((question) => (
+            <div className="relative mb-6 flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search questions..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0 hover:bg-transparent"
+                onClick={toggleSort}
+              >
+                <ArrowUpDown className="h-4 w-4" />
+              </Button>
+            </div>
+            {sortedAndFilteredQuestions.map((question) => (
               <QuestionCard key={question.questionId} question={question} />
             ))}
-          </div>
-        ) : (
-          <div className="text-center py-10">
-            <p className="text-muted-foreground">No archived questions found</p>
           </div>
         )}
       </main>
