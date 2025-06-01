@@ -41,7 +41,7 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block flex-1 mx-4">
-            <NavigationMenu className="float-right">
+            <NavigationMenu className="float-left">
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <Link to="/app">
@@ -51,26 +51,22 @@ const Navbar = () => {
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
-                {isConnected && (
-                  <>
-                    <NavigationMenuItem>
-                      <Link to="/app/my-questions">
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                          <HelpCircle className="mr-2 h-4 w-4" />
-                          My Questions
-                        </NavigationMenuLink>
-                      </Link>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem>
-                      <Link to="/app/my-answers">
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          My Answers
-                        </NavigationMenuLink>
-                      </Link>
-                    </NavigationMenuItem>
-                  </>
-                )}
+                  <NavigationMenuItem>
+                    <Link to="/app/my-questions">
+                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                        <HelpCircle className="mr-2 h-4 w-4" />
+                        My Questions
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link to="/app/my-answers">
+                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        My Answers
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link to="/app/archives">
                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -109,23 +105,19 @@ const Navbar = () => {
                     Home
                   </Link>
                 </DropdownMenuItem>
-                {isConnected && (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link to="/app/my-questions" className="cursor-pointer w-full">
-                        <HelpCircle className="mr-2 h-4 w-4" />
-                        My Questions
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/app/my-answers" className="cursor-pointer w-full">
-                        <BookOpen className="mr-2 h-4 w-4" />
-                        My Answers
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                  </>
-                )}
+                  <DropdownMenuItem asChild>
+                    <Link to="/app/my-questions" className="cursor-pointer w-full">
+                      <HelpCircle className="mr-2 h-4 w-4" />
+                      My Questions
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/app/my-answers" className="cursor-pointer w-full">
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      My Answers
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link to="/app/archives" className="cursor-pointer w-full">
                     <ArchiveIcon className="mr-2 h-4 w-4" />

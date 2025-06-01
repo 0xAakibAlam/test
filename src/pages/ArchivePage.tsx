@@ -80,7 +80,22 @@ const ArchivePage = () => {
         
         {isLoading ? (
           <div className="flex justify-center items-center py-10">
-            <div className="animate-pulse text-muted-foreground">Loading archived questions...</div>
+            <div className="w-full space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-24 bg-muted/50 rounded-lg border border-border">
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-muted rounded w-3/4" />
+                      <div className="h-3 bg-muted rounded w-1/2" />
+                      <div className="flex justify-between items-center">
+                        <div className="h-3 bg-muted rounded w-1/4" />
+                        <div className="h-3 bg-muted rounded w-1/4" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : questions.length > 0 ? (
           <div>

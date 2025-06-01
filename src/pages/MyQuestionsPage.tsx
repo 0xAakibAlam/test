@@ -62,43 +62,55 @@ const MyQuestionsPage = () => {
 
         <h1 className="text-3xl font-bold mb-6">My Questions</h1>
 
-        <div className="relative mb-6 flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search questions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 w-8 p-0 hover:bg-transparent"
-            onClick={toggleSort}
-          >
-            <ArrowUpDown className="h-4 w-4" />
-          </Button>
-        </div>
-
         {!isConnected ? (
           <div className="text-center py-10">
             <p className="text-muted-foreground mb-4">Please connect your wallet to view my questions</p>
           </div>
         ) : isLoading ? (
           <div className="flex justify-center items-center py-10">
-            <div className="animate-pulse text-muted-foreground">Loading your questions...</div>
+            <div className="w-full space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-24 bg-muted/50 rounded-lg border border-border">
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-muted rounded w-3/4" />
+                      <div className="h-3 bg-muted rounded w-1/2" />
+                      <div className="flex justify-between items-center">
+                        <div className="h-3 bg-muted rounded w-1/4" />
+                        <div className="h-3 bg-muted rounded w-1/4" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        ) : sortedAndFilteredQuestions.length > 0 ? (
+        ) : (
           <div>
+            <div className="relative mb-6 flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search questions..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0 hover:bg-transparent"
+                onClick={toggleSort}
+              >
+                <ArrowUpDown className="h-4 w-4" />
+              </Button>
+            </div>
             {sortedAndFilteredQuestions.map((question) => (
               <QuestionCard key={question.questionId} question={question} />
             ))}
           </div>
-        ) : (
-          <></>
         )}
       </main>
     </div>
