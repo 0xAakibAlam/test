@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@/components/ui/sonner";
 import { Clock } from "lucide-react";
+import AnswerCard from "@/components/AnswerCard";
 
 const AnswersPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +41,38 @@ const AnswersPage = () => {
     }
   };
 
+  const renderQuestionContent = () => {
+    // URL regex pattern
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    
+    // Split the text by URLs and map through the parts
+    const parts = question.question.split(urlRegex);
+    
+    return (
+      <div className="bg-muted/30 rounded-lg p-4">
+        <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+          {parts.map((part, index) => {
+            // Check if this part matches a URL
+            if (part.match(urlRegex)) {
+              return (
+                <a
+                  key={index}
+                  href={part}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline break-all"
+                >
+                  {part}
+                </a>
+              );
+            }
+            return part;
+          })}
+        </p>
+      </div>
+    );
+  };
+
   useEffect(() => {
     fetchData();
   }, [id]);
@@ -47,7 +80,7 @@ const AnswersPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container w-5/6 px-4 py-6">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
         <div className="mb-6">
         </div>
 
@@ -84,8 +117,9 @@ const AnswersPage = () => {
               </CardHeader>
 
               <CardContent className="pt-4 pb-6">
-                <div className="bg-muted/30 rounded-lg p-4">
-                  <p className="text-foreground leading-relaxed whitespace-pre-wrap">{question.question}</p>
+                <div className="bg-muted/30 rounded-lg">
+                {renderQuestionContent()}
+                  {/* <p className="text-foreground leading-relaxed whitespace-pre-wrap">{question.question}</p> */}
                 </div>
               </CardContent>
             </Card>
@@ -100,9 +134,7 @@ const AnswersPage = () => {
               answers.map((answer) => (
                 <Card key={answer.answerId} className="mb-4 hover:shadow-md transition-all duration-200 border-l-4 border-l-secondary/20">
                   <CardContent className="p-6">
-                    <div className="bg-muted/20 rounded-lg p-4">
-                      <p className="leading-relaxed whitespace-pre-wrap text-foreground">{answer.answer}</p>
-                    </div>
+                    <AnswerCard answer={answer}/>
                   </CardContent>
                 </Card>
               ))

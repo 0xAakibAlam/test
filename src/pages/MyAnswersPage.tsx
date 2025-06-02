@@ -13,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import AnswerCard from "@/components/AnswerCard";
 
 interface AnswerWithQuestion extends Answer {
   questionText?: string;
@@ -65,6 +66,38 @@ const MyAnswersPage = () => {
     fetchUserAnswers();
   }, [address, isConnected]);
 
+  const renderQuestionContent = (questionText) => {
+    // URL regex pattern
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    
+    // Split the text by URLs and map through the parts
+    const parts = questionText.split(urlRegex);
+    
+    return (
+      <div>
+        <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+          {parts.map((part, index) => {
+            // Check if this part matches a URL
+            if (part.match(urlRegex)) {
+              return (
+                <a
+                  key={index}
+                  href={part}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline break-all"
+                >
+                  {part}
+                </a>
+              );
+            }
+            return part;
+          })}
+        </p>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -112,16 +145,17 @@ const MyAnswersPage = () => {
                 <CardHeader className="pb-2">
                   <Link to={`/app/question/${answer.questionId}`} className="block">
                     <div className="space-y-1">
-                      <h3 className="text-lg font-semibold hover:text-primary transition-colors line-clamp-2">
-                        {answer.questionText}
+                      <h3 className="text-lg font-semibold hover:text-primary transition-colors">
+                        {renderQuestionContent(answer.questionText)}
                       </h3>
                     </div>
                   </Link>
                 </CardHeader>
                 <CardContent className="pt-0 pb-6">
-                  <div className="bg-muted/20 rounded-lg p-4">
+                  <AnswerCard answer={answer} />
+                  {/* <div className="bg-muted/20 rounded-lg p-4">
                     <p className="text-foreground leading-relaxed whitespace-pre-wrap">{answer.answer}</p>
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
             ))}
