@@ -12,14 +12,23 @@ import ArchivePage from "@/pages/ArchivePage";
 import NotFound from "@/pages/NotFound";
 
 import { createAppKit } from "@reown/appkit/react";
-import { EthersAdapter } from "@reown/appkit-adapter-ethers";
 import { sepolia } from "@reown/appkit/networks";
+import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
+import { cookieStorage, createStorage } from "wagmi";
 
 // 1. Get projectId
 const projectId = import.meta.env.VITE_WAGMI_PROJECT_ID
 
 // 2. Set the networks
 const networks = [sepolia] as [typeof sepolia];
+
+const wagmiAdapter = new WagmiAdapter({
+  projectId,
+  networks,
+  storage: createStorage({
+    storage: cookieStorage
+  })
+})
 
 // 3. Create a metadata object - optional
 const metadata = {
@@ -31,7 +40,7 @@ const metadata = {
 
 // 4. Create a AppKit instance
 createAppKit({
-  adapters: [new EthersAdapter()],
+  adapters: [wagmiAdapter],
   networks,
   metadata,
   projectId,
@@ -39,16 +48,7 @@ createAppKit({
     analytics: true, // Optional - defaults to your Cloud configuration
     email: false, // Disable email login
     socials: false, // Disable social logins
-  },
-  themeVariables: {
-    '--w3m-accent': '#0059b3',
-    '--w3m-font-family': "'Arial', sans-serif",
-    '--w3m-color-mix': '#ffffff',
-    '--w3m-color-mix-strength': 0,
-    '--w3m-font-size-master': '11px',
-    '--w3m-border-radius-master': '1px',
-    '--w3m-z-index': 1000,
-  },
+  }
 });
 
 const App = () => (
