@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { addAnswer } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,15 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [answer]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,10 +71,11 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
       <CardContent>
         <form onSubmit={handleSubmit}>
           <Textarea
+            ref = {textareaRef}
             placeholder="Share your knowledge anonymously..."
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            className="mb-4 min-h-24"
+            className="mb-4 min-h-24 resize-none overflow-hidden"
             disabled={isSubmitting || !isConnected}
           />
           <div className="flex justify-end">

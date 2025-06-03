@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Question } from "@/types";
 import { addAnswer } from "@/services/AnonqaService";
@@ -22,6 +22,29 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAnswerOverlay, setShowAnswerOverlay] = useState(false);
   const { address, isConnected } = useAppKitAccount();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Add effect to manage body scroll
+  useEffect(() => {
+    if (showAnswerOverlay) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup function to restore scroll when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showAnswerOverlay]);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [answer]);
 
   const handleAnswerSubmit = async () => {
     if (!answer.trim()) {
@@ -95,8 +118,8 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
   };
 
   const renderAnswerOverlay = () => (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <Card className="w-full max-w-2xl mx-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 overflow-y-auto py-8">
+      <Card className="w-full max-w-4xl mx-4 my-auto">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Post Your Answer</CardTitle>
           <Button
@@ -128,6 +151,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
 
         <CardContent>
           <Textarea
+            ref={textareaRef}
             placeholder="Write your answer here..."
             className="min-h-[200px]"
             value={answer}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { addQuestion } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,15 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
   const [days, setDays] = useState(7);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  }, [question]);
 
   const handleDaysChange = (value: number) => {
     if (value >= 1 && value <= 7) {
@@ -87,10 +96,11 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
             disabled={isSubmitting || !isConnected}
           />
           <Textarea
+            ref={textareaRef}
             placeholder="What's on your mind? Ask anything anonymously..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            className="min-h-24"
+            className="min-h-60 resize-none overflow-hidden"
             disabled={isSubmitting || !isConnected}
           />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
