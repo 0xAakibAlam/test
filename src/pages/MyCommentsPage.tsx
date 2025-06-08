@@ -13,14 +13,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import AnswerCard from "@/components/AnswerCard";
+import { CommentCard } from "@/components/CommentCard";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 
 interface AnswerWithQuestionTitle extends Answer {
   questionTitle?: string;
 }
 
-const MyAnswersPage = () => {
+export const MyCommentsPage = () => {
   const [answers, setAnswers] = useState<AnswerWithQuestionTitle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { address, isConnected } = useAppKitAccount();
@@ -57,8 +57,8 @@ const MyAnswersPage = () => {
         
         setAnswers(answersWithQuestionTitle);
       } catch (error) {
-        console.error("Error fetching user answers:", error);
-        toast.error("Failed to load my answers");
+        console.error("Error fetching user comments:", error);
+        toast.error("Failed to load my comments");
       } finally {
         setIsLoading(false);
       }
@@ -73,14 +73,14 @@ const MyAnswersPage = () => {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
 
       <div className="flex items-center gap-2 mb-6">
-        <h1 className="text-3xl font-bold">My Answers</h1>
+        <h1 className="text-3xl font-bold">My Comments</h1>
         <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
                 <Info className="h-5 w-5 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent side="right">
-                <p>Please connect your wallet to view my answers</p>
+                <p>Please connect your wallet to view my comments</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -110,21 +110,7 @@ const MyAnswersPage = () => {
         ) : answers.length > 0 ? (
           <div>
             {answers.map((answer) => (
-              // <Card key={answer.answerId} className="mb-4 hover:shadow-lg transition-all duration-200 border-l-4 border-l-secondary/20">
-              //   <CardHeader className="pb-2">
-              //     <Link to={`/app/question/${answer.questionId}`} className="block">
-              //       <div className="space-y-1">
-              //         <h3 className="text-lg font-semibold hover:text-primary transition-colors">
-              //           <RichTextRenderer content={answer.questionTitle} />
-              //         </h3>
-              //       </div>
-              //     </Link>
-              //   </CardHeader>
-              //   <CardContent className="pt-0 pb-6">
-              //     <AnswerCard answer={answer} questionTitle={answer.questionTitle} />
-              //   </CardContent>
-              // </Card>
-              <AnswerCard answer={answer} questionTitle={answer.questionTitle} />
+              <CommentCard answer={answer} questionTitle={answer.questionTitle} />
             ))}
           </div>
         ) : (
@@ -136,5 +122,3 @@ const MyAnswersPage = () => {
     </div>
   );
 };
-
-export default MyAnswersPage;

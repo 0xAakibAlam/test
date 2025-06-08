@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import QuestionCard from "@/components/QuestionCard";
+import { PostCard } from "@/components/PostCard";
 import { getUserQuestions } from "@/services/AnonqaService";
 import { Question } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
@@ -15,7 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const MyQuestionsPage = () => {
+export const MyPostsPage = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,7 +35,7 @@ const MyQuestionsPage = () => {
         setQuestions(data);
       } catch (error) {
         console.error("Error fetching user questions:", error);
-        toast.error("Failed to load my questions");
+        toast.error("Failed to load my posts");
       } finally {
         setIsLoading(false);
       }
@@ -67,14 +67,14 @@ const MyQuestionsPage = () => {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
 
         <div className="flex items-center gap-2 mb-6">
-          <h1 className="text-3xl font-bold">My Questions</h1>
+          <h1 className="text-3xl font-bold">My Posts</h1>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
                 <Info className="h-5 w-5 text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent side="right">
-                <p>Please connect your wallet to view my questions</p>
+                <p>Please connect your wallet to view my posts</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -124,7 +124,7 @@ const MyQuestionsPage = () => {
               </Button>
             </div>
             {sortedAndFilteredQuestions.map((question) => (
-              <QuestionCard key={question.questionId} question={question} />
+              <PostCard key={question.questionId} question={question} />
             ))}
           </div>
         )}
@@ -132,5 +132,3 @@ const MyQuestionsPage = () => {
     </div>
   );
 };
-
-export default MyQuestionsPage;

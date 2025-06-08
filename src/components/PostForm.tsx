@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { addQuestion } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
-import { CustomInputBox } from "./CustomInputBox";
-import { Input } from "@/components/ui/input";
+import { RichTextArea } from "./RichTextArea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import { MessageSquare } from "lucide-react";
@@ -13,7 +12,7 @@ interface QuestionFormProps {
   onQuestionAdded?: () => void;
 }
 
-const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
+export const PostForm = ({ onQuestionAdded }: QuestionFormProps) => {
   const [title, setTitle] = useState("");
   const [question, setQuestion] = useState("");
   const [days, setDays] = useState(7);
@@ -82,7 +81,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Ask a Question</CardTitle>
+        <CardTitle>Share Your Thoughts</CardTitle>
       </CardHeader>
       <CardContent className="px-4 sm:px-6">
         <form onSubmit={handleSubmit}>
@@ -97,7 +96,7 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
             <div className={`flex justify-end text-sm mb-4 ${title.length >= 100 ? 'text-destructive' : 'text-muted-foreground'}`}>
               {title.length}/100
             </div>
-          <CustomInputBox
+          <RichTextArea
             placeholder="Share anything anonymously..."
             value={question}
             onChange={setQuestion}
@@ -173,5 +172,3 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
     </Card>
   );
 };
-
-export default QuestionForm;

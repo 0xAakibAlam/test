@@ -12,7 +12,7 @@ interface AnswerCardProps {
   questionTitle: string;
 }
 
-const AnswerCard = ({ answer, questionTitle }: AnswerCardProps) => {
+export const CommentCard = ({ answer, questionTitle }: AnswerCardProps) => {
   return (
     <Card className="mb-4 hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
       {questionTitle && (
@@ -30,5 +30,3 @@ const AnswerCard = ({ answer, questionTitle }: AnswerCardProps) => {
     </Card>
   );
 };
-
-export default AnswerCard;

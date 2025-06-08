@@ -3,7 +3,7 @@ import { CustomConnectButton } from './ConnectButton';
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, ArchiveIcon, HelpCircle, Menu, HomeIcon, BookOpen } from "lucide-react";
+import { Moon, Sun, ArchiveIcon, MessageSquare, Menu, HomeIcon, MessageCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,16 +54,16 @@ const Navbar = () => {
                   <NavigationMenuItem>
                     <Link to="/app/my-questions">
                       <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                        <HelpCircle className="mr-2 h-4 w-4" />
-                        My Questions
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        My Posts
                       </NavigationMenuLink>
                     </Link>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
                     <Link to="/app/my-answers">
                       <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                        <BookOpen className="mr-2 h-4 w-4" />
-                        My Answers
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        My Comments
                       </NavigationMenuLink>
                     </Link>
                   </NavigationMenuItem>
@@ -107,14 +107,14 @@ const Navbar = () => {
                 </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/app/my-questions" className="cursor-pointer w-full">
-                      <HelpCircle className="mr-2 h-4 w-4" />
-                      My Questions
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      My Posts
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/app/my-answers" className="cursor-pointer w-full">
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      My Answers
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      My Comments
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

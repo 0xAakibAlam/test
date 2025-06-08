@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { addAnswer } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
-import { CustomInputBox } from "./CustomInputBox";
+import { RichTextArea } from "./RichTextArea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import { MessageSquare } from "lucide-react";
@@ -13,7 +13,7 @@ interface AnswerFormProps {
   onAnswerAdded?: () => void;
 }
 
-const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
+export const CommentForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
@@ -57,11 +57,11 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Post My Answer</CardTitle>
+        <CardTitle>Write Comments</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
-          <CustomInputBox
+          <RichTextArea
             placeholder="Add Comments..."
             value={answer}
             onChange={setAnswer}
@@ -83,5 +83,3 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
     </Card>
   );
 };
-
-export default AnswerForm;

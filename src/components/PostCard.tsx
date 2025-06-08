@@ -10,14 +10,14 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/sonner";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { CustomInputBox } from "./CustomInputBox";
+import { RichTextArea } from "./RichTextArea";
 import { RichTextRenderer } from "./RichTextRenderer";
 
 interface QuestionCardProps {
   question: Question;
 }
 
-const QuestionCard = ({ question }: QuestionCardProps) => {
+export const PostCard = ({ question }: QuestionCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,7 +110,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
         </div>
 
         <CardContent className="px-3 md:px-6">
-          <CustomInputBox
+          <RichTextArea
             placeholder="Write your answer here..."
             className="min-h-[200px]"
             value={answer}
@@ -205,5 +205,3 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
     </>
   );
 };
-
-export default QuestionCard;

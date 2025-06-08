@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import QuestionForm from "@/components/QuestionForm";
-import QuestionCard from "@/components/QuestionCard";
+import { PostForm } from "@/components/PostForm";
+import { PostCard } from "@/components/PostCard";
 import { getActiveQuestions } from "@/services/AnonqaService";
 import { Question } from "@/types";
 import { toast } from "@/components/ui/sonner";
@@ -55,9 +55,9 @@ const HomePage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-        <QuestionForm onQuestionAdded={fetchQuestions} />
+        <PostForm onQuestionAdded={fetchQuestions} />
 
-        <h2 className="text-xl sm:text-2xl font-bold mb-4">Active Questions</h2>
+        <h2 className="text-xl sm:text-2xl font-bold mb-4">Posts</h2>
 
         <div className="relative mb-6 flex items-center gap-2">
           <div className="relative flex-1">
@@ -101,7 +101,7 @@ const HomePage = () => {
         </div>
         ) : sortedAndFilteredQuestions.length > 0 ? (
           sortedAndFilteredQuestions.map((question) => (
-            <QuestionCard key={question.questionId} question={question} />
+            <PostCard key={question.questionId} question={question} />
           ))
         ) : searchTerm ? (
           <div className="text-center py-10">

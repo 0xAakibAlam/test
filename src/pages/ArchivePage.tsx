@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import QuestionCard from "@/components/QuestionCard";
+import { PostCard } from "@/components/PostCard";
 import { getArchivedQuestions } from "@/services/AnonqaService";
 import { Question } from "@/types";
 import { toast } from "@/components/ui/sonner";
@@ -99,7 +99,7 @@ const ArchivePage = () => {
               </Button>
             </div>
             {sortedAndFilteredQuestions.map((question) => (
-              <QuestionCard key={question.questionId} question={question} />
+              <PostCard key={question.questionId} question={question} />
             ))}
           </div>
         )}

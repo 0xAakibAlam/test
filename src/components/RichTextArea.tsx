@@ -199,7 +199,7 @@ const isCodeBlockActive = (editor: Editor) => {
     return !!match;
 };
 
-export const CustomInputBox = ({
+export const RichTextArea = ({
     value,
     onChange,
     placeholder = "",
@@ -564,5 +564,3 @@ export const CustomInputBox = ({
         </div>
     );
 };
-
-export default CustomInputBox;

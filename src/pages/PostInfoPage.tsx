@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import AnswerForm from "@/components/AnswerForm";
+import { CommentForm } from "@/components/CommentForm";
 import { getQuestionById, getAnswersForQuestion } from "@/services/AnonqaService";
 import { Question, Answer } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@/components/ui/sonner";
 import { Clock } from "lucide-react";
-import AnswerCard from "@/components/AnswerCard";
+import { CommentCard } from "@/components/CommentCard";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 
-const AnswersPage = () => {
+export const PostInfoPage = () => {
   const { id } = useParams<{ id: string }>();
   const [question, setQuestion] = useState<Question | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -92,7 +92,7 @@ const AnswersPage = () => {
               </CardContent>
             </Card>
 
-            <AnswerForm questionId={id as string} onAnswerAdded={fetchData} />
+            <CommentForm questionId={id as string} onAnswerAdded={fetchData} />
 
             <h2 className="text-xl font-bold mb-4 mt-8">
               Answers
@@ -100,11 +100,7 @@ const AnswersPage = () => {
 
             {answers.length > 0 ? (
               answers.map((answer) => (
-                    <AnswerCard answer={answer} questionTitle={""}/>
-                // <Card key={answer.answerId} className="mb-4 hover:shadow-md transition-all duration-200 border-l-4 border-l-secondary/20">
-                //   <CardContent className="p-6">
-                //   </CardContent>
-                // </Card>
+                <CommentCard answer={answer} questionTitle={""}/>
               ))
             ) : (
               <div className="text-center py-10 bg-muted/20 rounded-lg">
@@ -121,5 +117,3 @@ const AnswersPage = () => {
     </div>
   );
 };
-
-export default AnswersPage;
