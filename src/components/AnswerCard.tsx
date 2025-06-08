@@ -1,55 +1,33 @@
-
 import { Answer } from "@/types";
 import { formatDistanceToNow } from "date-fns";
-import { ThumbsUp } from "lucide-react";
+import { Eye, Link as LucideLink, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
+import { RichTextRenderer } from "./RichTextRenderer";
+import { Link } from "react-router-dom";
 
 interface AnswerCardProps {
   answer: Answer;
+  questionTitle: string;
 }
 
-const AnswerCard = ({ answer }: AnswerCardProps) => {
-
-  const renderAnswerContent = () => {
-    // URL regex pattern
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    
-    // Split the text by URLs and map through the parts
-    const parts = answer.answer.split(urlRegex);
-    
-    return (
-      <div className="bg-muted/30 rounded-lg p-4">
-        <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-          {parts.map((part, index) => {
-            // Check if this part matches a URL
-            if (part.match(urlRegex)) {
-              return (
-                <a
-                  key={index}
-                  href={part}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline break-all"
-                >
-                  {part}
-                </a>
-              );
-            }
-            return part;
-          })}
-        </p>
-      </div>
-    );
-  };
-
+const AnswerCard = ({ answer, questionTitle }: AnswerCardProps) => {
   return (
-    // <Card className="mb-4">
-    //   <CardContent>
-        <p className="mb-4 leading-relaxed whitespace-pre-wrap text-foreground">{renderAnswerContent()}</p>
-      // </CardContent>
-    // </Card>
+    <Card className="mb-4 hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
+      {questionTitle && (
+        <CardHeader className="pb-2 px-3 md:px-6">
+          <Link to={`/questions/${answer.questionId}`}>
+            <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+              {questionTitle}
+            </CardTitle>
+          </Link>
+        </CardHeader>
+      )}
+      <CardContent className="pt-4 pb-6 px-3 md:px-6">
+        <RichTextRenderer content={answer.answer} />
+      </CardContent>
+    </Card>
   );
 };
 

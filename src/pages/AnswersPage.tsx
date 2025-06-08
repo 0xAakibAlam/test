@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { toast } from "@/components/ui/sonner";
 import { Clock } from "lucide-react";
 import AnswerCard from "@/components/AnswerCard";
+import { RichTextRenderer } from "@/components/RichTextRenderer";
 
 const AnswersPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,38 +40,6 @@ const AnswersPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const renderQuestionContent = () => {
-    // URL regex pattern
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    
-    // Split the text by URLs and map through the parts
-    const parts = question.question.split(urlRegex);
-    
-    return (
-      <div className="bg-muted/30 rounded-lg p-4">
-        <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-          {parts.map((part, index) => {
-            // Check if this part matches a URL
-            if (part.match(urlRegex)) {
-              return (
-                <a
-                  key={index}
-                  href={part}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline break-all"
-                >
-                  {part}
-                </a>
-              );
-            }
-            return part;
-          })}
-        </p>
-      </div>
-    );
   };
 
   useEffect(() => {
@@ -118,8 +87,7 @@ const AnswersPage = () => {
 
               <CardContent className="pt-4 pb-6">
                 <div className="bg-muted/30 rounded-lg">
-                {renderQuestionContent()}
-                  {/* <p className="text-foreground leading-relaxed whitespace-pre-wrap">{question.question}</p> */}
+                  <RichTextRenderer content={question.question} />
                 </div>
               </CardContent>
             </Card>
@@ -132,11 +100,11 @@ const AnswersPage = () => {
 
             {answers.length > 0 ? (
               answers.map((answer) => (
-                <Card key={answer.answerId} className="mb-4 hover:shadow-md transition-all duration-200 border-l-4 border-l-secondary/20">
-                  <CardContent className="p-6">
-                    <AnswerCard answer={answer}/>
-                  </CardContent>
-                </Card>
+                    <AnswerCard answer={answer} questionTitle={""}/>
+                // <Card key={answer.answerId} className="mb-4 hover:shadow-md transition-all duration-200 border-l-4 border-l-secondary/20">
+                //   <CardContent className="p-6">
+                //   </CardContent>
+                // </Card>
               ))
             ) : (
               <div className="text-center py-10 bg-muted/20 rounded-lg">

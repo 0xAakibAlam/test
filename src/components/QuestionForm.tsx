@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { addQuestion } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { CustomInputBox } from "./CustomInputBox";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import { MessageSquare } from "lucide-react";
+import { Textarea } from "./ui/textarea";
 
 interface QuestionFormProps {
   onQuestionAdded?: () => void;
@@ -18,15 +19,6 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
   const [days, setDays] = useState(7);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [question]);
 
   const handleDaysChange = (value: number) => {
     if (value >= 1 && value <= 7) {
@@ -44,6 +36,11 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
 
     if (!title.trim()) {
       toast.error("Please enter a title");
+      return;
+    }
+    
+    if (title.length > 100) {
+      toast.error("Title must not exceed 100 characters");
       return;
     }
     
@@ -87,23 +84,27 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
       <CardHeader>
         <CardTitle>Ask a Question</CardTitle>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            placeholder="Enter Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={isSubmitting || !isConnected}
-          />
-          <Textarea
-            ref={textareaRef}
-            placeholder="What's on your mind? Ask anything anonymously..."
+      <CardContent className="px-4 sm:px-6">
+        <form onSubmit={handleSubmit}>
+            <Textarea
+              placeholder="Enter Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              disabled={isSubmitting || !isConnected}
+              className="mb-1 text-xs md:text-xl h-auto overflow-hidden"
+              maxLength={100}
+            />
+            <div className={`flex justify-end text-sm mb-4 ${title.length >= 100 ? 'text-destructive' : 'text-muted-foreground'}`}>
+              {title.length}/100
+            </div>
+          <CustomInputBox
+            placeholder="Share anything anonymously..."
             value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            className="min-h-60 resize-none overflow-hidden"
+            onChange={setQuestion}
+            className="min-h-80 resize-none overflow-hidden mb-4"
             disabled={isSubmitting || !isConnected}
           />
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:gap-3">
             <div className="flex items-center gap-2 bg-muted/50 px-3 py-2 rounded-md w-fit">
               <span className="text-sm text-muted-foreground whitespace-nowrap">Expires in</span>
               <div className="flex items-center gap-2">
@@ -141,10 +142,10 @@ const QuestionForm = ({ onQuestionAdded }: QuestionFormProps) => {
                 </div>
               </div>
             </div>
-            <div className="hidden sm:block flex-1 px-4">
+            <div className="hidden sm:block flex-1 sm:px-4">
               <div className="h-[1px] bg-border w-full" />
             </div>
-            <div className="pr-8 hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="px-4 sm:pr-8 hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
             {isConnected && <><span>Question will be active until</span>
               <span className="font-medium">
                 {new Date(Date.now() + days * 24 * 60 * 60 * 1000).toLocaleString(undefined, {

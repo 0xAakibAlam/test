@@ -1,9 +1,9 @@
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { addAnswer } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { CustomInputBox } from "./CustomInputBox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import { MessageSquare } from "lucide-react";
@@ -17,15 +17,6 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
   const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [answer]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,12 +61,11 @@ const AnswerForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
-          <Textarea
-            ref = {textareaRef}
-            placeholder="Share your knowledge anonymously..."
+          <CustomInputBox
+            placeholder="Add Comments..."
             value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            className="mb-4 min-h-24 resize-none overflow-hidden"
+            onChange={setAnswer}
+            className="min-h-60 resize-none overflow-hidden mb-4"
             disabled={isSubmitting || !isConnected}
           />
           <div className="flex justify-end">

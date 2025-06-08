@@ -14,13 +14,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import AnswerCard from "@/components/AnswerCard";
+import { RichTextRenderer } from "@/components/RichTextRenderer";
 
-interface AnswerWithQuestion extends Answer {
-  questionText?: string;
+interface AnswerWithQuestionTitle extends Answer {
+  questionTitle?: string;
 }
 
 const MyAnswersPage = () => {
-  const [answers, setAnswers] = useState<AnswerWithQuestion[]>([]);
+  const [answers, setAnswers] = useState<AnswerWithQuestionTitle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { address, isConnected } = useAppKitAccount();
 
@@ -36,25 +37,25 @@ const MyAnswersPage = () => {
         const answersData = await getUserAnswers(address);
         
         // Fetch the question text for each answer
-        const answersWithQuestions = await Promise.all(
+        const answersWithQuestionTitle = await Promise.all(
           answersData.map(async (answer) => {
             try {
               const question = await getQuestionById(answer.questionId);
               return {
                 ...answer,
-                questionText: question?.question || "Question not found"
+                questionTitle: question?.questionTitle || "Question not found"
               };
             } catch (error) {
               console.error("Error fetching question:", error);
               return {
                 ...answer,
-                questionText: "Question not found"
+                questionTitle: "Question not found"
               };
             }
           })
         );
         
-        setAnswers(answersWithQuestions);
+        setAnswers(answersWithQuestionTitle);
       } catch (error) {
         console.error("Error fetching user answers:", error);
         toast.error("Failed to load my answers");
@@ -65,38 +66,6 @@ const MyAnswersPage = () => {
 
     fetchUserAnswers();
   }, [address, isConnected]);
-
-  const renderQuestionContent = (questionText) => {
-    // URL regex pattern
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    
-    // Split the text by URLs and map through the parts
-    const parts = questionText.split(urlRegex);
-    
-    return (
-      <div>
-        <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-          {parts.map((part, index) => {
-            // Check if this part matches a URL
-            if (part.match(urlRegex)) {
-              return (
-                <a
-                  key={index}
-                  href={part}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline break-all"
-                >
-                  {part}
-                </a>
-              );
-            }
-            return part;
-          })}
-        </p>
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -141,23 +110,21 @@ const MyAnswersPage = () => {
         ) : answers.length > 0 ? (
           <div>
             {answers.map((answer) => (
-              <Card key={answer.answerId} className="mb-4 hover:shadow-lg transition-all duration-200 border-l-4 border-l-secondary/20">
-                <CardHeader className="pb-2">
-                  <Link to={`/app/question/${answer.questionId}`} className="block">
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-semibold hover:text-primary transition-colors">
-                        {renderQuestionContent(answer.questionText)}
-                      </h3>
-                    </div>
-                  </Link>
-                </CardHeader>
-                <CardContent className="pt-0 pb-6">
-                  <AnswerCard answer={answer} />
-                  {/* <div className="bg-muted/20 rounded-lg p-4">
-                    <p className="text-foreground leading-relaxed whitespace-pre-wrap">{answer.answer}</p>
-                  </div> */}
-                </CardContent>
-              </Card>
+              // <Card key={answer.answerId} className="mb-4 hover:shadow-lg transition-all duration-200 border-l-4 border-l-secondary/20">
+              //   <CardHeader className="pb-2">
+              //     <Link to={`/app/question/${answer.questionId}`} className="block">
+              //       <div className="space-y-1">
+              //         <h3 className="text-lg font-semibold hover:text-primary transition-colors">
+              //           <RichTextRenderer content={answer.questionTitle} />
+              //         </h3>
+              //       </div>
+              //     </Link>
+              //   </CardHeader>
+              //   <CardContent className="pt-0 pb-6">
+              //     <AnswerCard answer={answer} questionTitle={answer.questionTitle} />
+              //   </CardContent>
+              // </Card>
+              <AnswerCard answer={answer} questionTitle={answer.questionTitle} />
             ))}
           </div>
         ) : (

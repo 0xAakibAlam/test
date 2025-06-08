@@ -4,7 +4,7 @@ export const CustomConnectButton = () => {
       label="Connect Wallet"
       loadingLabel="Connecting..."
       size="md" 
-      balance="hide"
+      // balance="hide"
     />
   );
 };

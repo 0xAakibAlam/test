@@ -59,7 +59,7 @@ const HomePage = () => {
 
         <h2 className="text-xl sm:text-2xl font-bold mb-4">Active Questions</h2>
 
-        <div className="relative mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        <div className="relative mb-6 flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -70,10 +70,10 @@ const HomePage = () => {
               className="pl-10 w-full"
             />
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-10 w-full sm:w-10 p-0 hover:bg-transparent"
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-10 sm:w-10 p-0 hover:bg-transparent flex-shrink-0"
             onClick={toggleSort}
           >
             <ArrowUpDown className="h-4 w-4" />
@@ -100,11 +100,9 @@ const HomePage = () => {
           </div>
         </div>
         ) : sortedAndFilteredQuestions.length > 0 ? (
-          <div className="grid gap-4">
-            {sortedAndFilteredQuestions.map((question) => (
-              <QuestionCard key={question.questionId} question={question} />
-            ))}
-          </div>
+          sortedAndFilteredQuestions.map((question) => (
+            <QuestionCard key={question.questionId} question={question} />
+          ))
         ) : searchTerm ? (
           <div className="text-center py-10">
             <p className="text-muted-foreground mb-4">No questions match your search</p>

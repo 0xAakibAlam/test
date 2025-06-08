@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Question } from "@/types";
 import { addAnswer } from "@/services/AnonqaService";
@@ -10,7 +10,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/sonner";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { Textarea } from "@/components/ui/textarea";
+import { CustomInputBox } from "./CustomInputBox";
+import { RichTextRenderer } from "./RichTextRenderer";
 
 interface QuestionCardProps {
   question: Question;
@@ -22,9 +23,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAnswerOverlay, setShowAnswerOverlay] = useState(false);
   const { address, isConnected } = useAppKitAccount();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Add effect to manage body scroll
   useEffect(() => {
     if (showAnswerOverlay) {
       document.body.style.overflow = 'hidden';
@@ -32,19 +31,10 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
       document.body.style.overflow = 'unset';
     }
 
-    // Cleanup function to restore scroll when component unmounts
     return () => {
       document.body.style.overflow = 'unset';
     };
   }, [showAnswerOverlay]);
-
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
-    }
-  }, [answer]);
 
   const handleAnswerSubmit = async () => {
     if (!answer.trim()) {
@@ -85,42 +75,10 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
     setAnswer("");
   };
 
-  const renderQuestionContent = () => {
-    // URL regex pattern
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    
-    // Split the text by URLs and map through the parts
-    const parts = question.question.split(urlRegex);
-    
-    return (
-      <div className="bg-muted/30 rounded-lg p-4">
-        <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-          {parts.map((part, index) => {
-            // Check if this part matches a URL
-            if (part.match(urlRegex)) {
-              return (
-                <a
-                  key={index}
-                  href={part}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline break-all"
-                >
-                  {part}
-                </a>
-              );
-            }
-            return part;
-          })}
-        </p>
-      </div>
-    );
-  };
-
   const renderAnswerOverlay = () => (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 overflow-y-auto py-8">
       <Card className="w-full max-w-4xl mx-4 my-auto">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-between px-3 md:px-6">
           <CardTitle>Post Your Answer</CardTitle>
           <Button
             variant="ghost"
@@ -131,11 +89,13 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
           </Button>
         </CardHeader>
 
-        <div className="px-6">
+        <div className="px-3 md:px-6">
           <Card className="mb-6 border-l-4 border-l-primary/20">
             <CardHeader className="pb-2">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <CardTitle className="text-lg font-semibold line-clamp-2">{question.questionTitle}</CardTitle>
+                <CardTitle className="text-md font-semibold group-hover:text-primary transition-colors break-words">
+                  {question.questionTitle}
+                </CardTitle>
                 <div className="text-sm text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-4 w-4" />
                   <span>Expires {formatDistanceToNow(new Date(parseInt(question.endTime) * 1000), { addSuffix: true })}</span>
@@ -143,19 +103,18 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
               </div>
             </CardHeader>
 
-            <CardContent className="pt-4 pb-6">
-              {renderQuestionContent()}
+            <CardContent className="pt-4 pb-6 px-3 md:px-6 break-words">
+              <RichTextRenderer content={question.question} />
             </CardContent>
           </Card>
         </div>
 
-        <CardContent>
-          <Textarea
-            ref={textareaRef}
+        <CardContent className="px-3 md:px-6">
+          <CustomInputBox
             placeholder="Write your answer here..."
             className="min-h-[200px]"
             value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
+            onChange={setAnswer}
             disabled={isSubmitting || !isConnected}
           />
         </CardContent>
@@ -190,10 +149,10 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <CollapsibleTrigger asChild>
             <div className="cursor-pointer">
-              <CardHeader className="pb-2">
+              <CardHeader className="pb-2 px-3 md:px-6">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
+                    <CardTitle className="text-md font-semibold group-hover:text-primary transition-colors break-words">
                       {question.questionTitle}
                     </CardTitle>
                     <div className="mt-2 text-sm text-muted-foreground">
@@ -212,12 +171,12 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
           </CollapsibleTrigger>
           
           <CollapsibleContent>
-            <CardContent className="pt-4 pb-6">
-              {renderQuestionContent()}
+            <CardContent className="pt-4 pb-6 px-3 md:px-6 break-words">
+              <RichTextRenderer content={question.question} />
             </CardContent>
             
-            <CardFooter className="flex flex-col sm:flex-row gap-4 pt-0 pb-6 px-6">
-              <Link to={`/app/question/${question.questionId}`} className="w-full">
+            <CardFooter className="flex justify-end gap-2 pt-0 pb-6 px-3 md:px-6">
+              <Link to={`/app/question/${question.questionId}`} className="flex-1">
                 <Button 
                   variant="outline" 
                   className="flex items-center gap-2 w-full justify-center"
@@ -229,7 +188,7 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
               {!question.sentToHeaven && (
                 <Button 
                   variant="default"
-                  className="flex items-center gap-2 w-full justify-center"
+                  className="flex items-center gap-2 flex-1 justify-center"
                   disabled={!isConnected}
                   onClick={handleOpenAnswerOverlay}
                 >
