@@ -59,7 +59,7 @@ export const CommentForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
       <CardHeader>
         <CardTitle>Write Comments</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-3 sm:px-6">
         <form onSubmit={handleSubmit}>
           <RichTextArea
             placeholder="Add Comments..."

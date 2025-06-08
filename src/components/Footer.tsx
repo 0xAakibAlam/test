@@ -55,6 +55,9 @@ const Footer = () => {
               </a>
             ))}
           </div>
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            <p>© {currentYear} AnonQA. All rights reserved.</p>
+          </div>
         </div>
       </div>
     </footer>

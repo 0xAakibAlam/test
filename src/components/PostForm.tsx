@@ -51,7 +51,6 @@ export const PostForm = ({ onQuestionAdded }: QuestionFormProps) => {
     setIsSubmitting(true);
     
     try {
-      // Calculate end time based on selected days
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + days);
       const timestamp = Math.floor(endDate.getTime() / 1000);
@@ -83,7 +82,7 @@ export const PostForm = ({ onQuestionAdded }: QuestionFormProps) => {
       <CardHeader>
         <CardTitle>Share Your Thoughts</CardTitle>
       </CardHeader>
-      <CardContent className="px-4 sm:px-6">
+      <CardContent className="px-3 sm:px-6">
         <form onSubmit={handleSubmit}>
             <Textarea
               placeholder="Enter Title"
