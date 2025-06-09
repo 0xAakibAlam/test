@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { CustomConnectButton } from './ConnectButton';
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useTheme } from "@/context/ThemeContext";
@@ -20,85 +20,30 @@ import {
 } from "@/components/ui/navigation-menu";
 
 const Navbar = () => {
-  const { isConnected } = useAppKitAccount();
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
 
   return (
-    <nav className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 py-3">
+    <nav>
+      <div className="container px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo and Brand */}
-          <div className="flex items-center gap-2 min-w-[120px]">
+          <div className="flex items-center gap-2">
             <Link to="/" className="text-xl font-bold flex items-center gap-2">
               <img 
                 src="/AnonQA.png" 
                 alt="AnonQA" 
-                className="h-8 w-8 object-contain" 
+                className="h-10 w-10 object-contain" 
               /> 
-              <span>AnonQA</span>
             </Link>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:block flex-1 mx-4">
-            <NavigationMenu className="float-left">
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <Link to="/app">
-                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                      <HomeIcon className="mr-2 h-4 w-4" />
-                      Home
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <Link to="/app/my-questions">
-                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        My Posts
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                  <NavigationMenuItem>
-                    <Link to="/app/my-answers">
-                      <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                        <MessageCircle className="mr-2 h-4 w-4" />
-                        My Comments
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link to="/app/archives">
-                    <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                      <ArchiveIcon className="mr-2 h-4 w-4" />
-                      Archives
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div className="flex-shrink-0">
-              <CustomConnectButton />
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-              className="hidden sm:flex"
-            >
-              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-            </Button>
-
             <DropdownMenu>
-              <DropdownMenuTrigger asChild className="md:hidden">
-                  <Menu className="h-8 w-8" />
+              <DropdownMenuTrigger asChild className="md:hidden p-2 rounded-lg"
+                style={{
+                  backgroundColor: theme === "light" ? "#F0F0F0" : "#222222",
+                }}
+              >
+                  <Menu className="h-10 w-10" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent className="w-screen px-4">
                 <DropdownMenuItem asChild>
                   <Link to="/app" className="cursor-pointer w-full">
                     <HomeIcon className="mr-2 h-4 w-4" />
@@ -143,6 +88,95 @@ const Navbar = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          </div>
+
+          <div className="hidden md:block flex-1 mx-4">
+            <NavigationMenu className="float-left">
+              <NavigationMenuList className="p-1 rounded-lg shadow-md flex gap-1"
+                style={{
+                  backgroundColor: theme === "light" ? "#FFFFFF" : "#1A1A1A",
+                  borderRadius: "8px",
+                  boxShadow: theme === "light" ? "0 6px 20px rgba(0, 0, 0, 0.2)" : "0 6px 20px rgba(0, 0, 0, 0.7)",
+                }}
+              >
+                <NavigationMenuItem>
+                  <Link to="/app">
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()} style={{
+                      backgroundColor: location.pathname === "/app" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
+                      color: theme === "light" ? "#1A1A1A" : "#E0E0E0",
+                      borderRadius: "6px",
+                      padding: "6px 12px",
+                      height: "auto",
+                      transition: "all 0.3s ease",
+                    }}>
+                      <HomeIcon className="mr-2 h-6 w-6" />
+                      Home
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link to="/app/my-questions">
+                      <NavigationMenuLink className={navigationMenuTriggerStyle()} style={{
+                        backgroundColor: location.pathname === "/app/my-questions" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
+                        color: theme === "light" ? "#1A1A1A" : "#E0E0E0",
+                        borderRadius: "6px",
+                        padding: "6px 12px",
+                        height: "auto",
+                        transition: "all 0.3s ease",
+                      }}>
+                        <MessageSquare className="mr-2 h-6 w-6" />
+                        My Posts
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link to="/app/my-answers">
+                      <NavigationMenuLink className={navigationMenuTriggerStyle()} style={{
+                        backgroundColor: location.pathname === "/app/my-answers" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
+                        color: theme === "light" ? "#1A1A1A" : "#E0E0E0",
+                        borderRadius: "6px",
+                        padding: "6px 12px",
+                        height: "auto",
+                        transition: "all 0.3s ease",
+                      }}>
+                        <MessageCircle className="mr-2 h-6 w-6" />
+                        My Comments
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link to="/app/archives">
+                    <NavigationMenuLink className={navigationMenuTriggerStyle()} style={{
+                      backgroundColor: location.pathname === "/app/archives" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
+                      color: theme === "light" ? "#1A1A1A" : "#E0E0E0",
+                      borderRadius: "6px",
+                      padding: "6px 12px",
+                      height: "auto",
+                      transition: "all 0.3s ease",
+                    }}>
+                      <ArchiveIcon className="mr-2 h-6 w-6" />
+                      Archives
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex-shrink-0">
+              <CustomConnectButton />
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+              className="hidden sm:flex"
+            >
+              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+            </Button>
           </div>
         </div>
       </div>
