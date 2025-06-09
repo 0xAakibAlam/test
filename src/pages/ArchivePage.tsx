@@ -8,7 +8,7 @@ import { Question } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowUpDown } from "lucide-react";
+import { Search, ArrowUpDown, Archive } from "lucide-react";
 
 const ArchivePage = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -76,7 +76,7 @@ const ArchivePage = () => {
               ))}
             </div>
           </div>
-        ) : (
+        ) : sortedAndFilteredQuestions.length > 0 ? (
           <div>
             <div className="relative mb-6 flex items-center gap-2">
               <div className="relative flex-1">
@@ -101,6 +101,13 @@ const ArchivePage = () => {
             {sortedAndFilteredQuestions.map((question) => (
               <PostCard key={question.questionId} question={question} />
             ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center gap-3 mb-2 animate-in fade-in-50 zoom-in-50 duration-700">
+              <Archive className="h-8 w-8 animate-[float_3s_ease-in-out_infinite]" />
+              <h2 className="text-2xl font-semibold">No Posts Archived Yet</h2>
+            </div>
           </div>
         )}
       </main>

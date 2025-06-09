@@ -77,7 +77,7 @@ export const PostInfoPage = () => {
             <Card className="mb-6 border-l-4 border-l-primary/20">
               <CardHeader className="pb-2">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <CardTitle className="text-lg font-semibold line-clamp-2">{question.questionTitle}</CardTitle>
+                  <CardTitle className="text-xl md:text-2xl font-semibold line-clamp-2">{question.questionTitle}</CardTitle>
                   <div className="text-sm text-muted-foreground flex items-center gap-1.5">
                     <Clock className="h-4 w-4" />
                     <span>Expires {formatDistanceToNow(new Date(parseInt(question.endTime) * 1000), { addSuffix: true })}</span>
@@ -86,9 +86,7 @@ export const PostInfoPage = () => {
               </CardHeader>
 
               <CardContent className="pt-4 pb-6">
-                <div className="bg-muted/30 rounded-lg">
-                  <RichTextRenderer content={question.question} />
-                </div>
+                <RichTextRenderer content={question.question} />
               </CardContent>
             </Card>
 

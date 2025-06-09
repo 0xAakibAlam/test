@@ -7,13 +7,8 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, ArrowUpDown, Info } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Search, ArrowUpDown, Wallet, MessageSquare, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const MyPostsPage = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -21,6 +16,7 @@ export const MyPostsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const { address, isConnected } = useAppKitAccount();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserQuestions = async () => {
@@ -68,20 +64,18 @@ export const MyPostsPage = () => {
 
         <div className="flex items-center gap-2 mb-6">
           <h1 className="text-3xl font-bold">My Posts</h1>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="h-5 w-5 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Please connect your wallet to view my posts</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </div>
 
         {!isConnected ? (
-          <></>
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center gap-3 mb-2 animate-in fade-in-50 zoom-in-50 duration-700">
+              <Wallet className="h-8 w-8 animate-[float_3s_ease-in-out_infinite]" />
+              <h2 className="text-2xl font-semibold">Connect Your Wallet</h2>
+            </div>
+            <p className="text-muted-foreground mb-6 max-w-md animate-in fade-in-50 slide-in-from-bottom-2 duration-1000">
+              Connect wallet to view your posts
+            </p>
+          </div>
         ) : isLoading ? (
           <div className="flex justify-center items-center py-10">
             <div className="w-full space-y-4">
@@ -101,7 +95,7 @@ export const MyPostsPage = () => {
               ))}
             </div>
           </div>
-        ) : (
+        ) : sortedAndFilteredQuestions.length > 0 ? (
           <div>
             <div className="relative mb-6 flex items-center gap-2">
               <div className="relative flex-1">
@@ -127,8 +121,40 @@ export const MyPostsPage = () => {
               <PostCard key={question.questionId} question={question} />
             ))}
           </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center gap-3 mb-2 animate-in fade-in-50 zoom-in-50 duration-700">
+              <MessageSquare className="h-8 w-8 animate-[float_3s_ease-in-out_infinite]" />
+              <h2 className="text-2xl font-semibold">No Posts Yet</h2>
+            </div>
+            <div 
+              onClick={() => navigate('/app')}
+              className="flex items-center gap-2 text-muted-foreground mb-6 max-w-md animate-in fade-in-50 slide-in-from-bottom-2 duration-1000 cursor-pointer hover:text-foreground transition-colors"
+            >
+              <p>Write your first post to get started</p>
+              <ArrowRight className="h-4 w-4" />
+            </div>
+          </div>
         )}
       </main>
     </div>
   );
 };
+
+const floatAnimation = `
+@keyframes float {
+  0% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.05);
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+}
+`;
+
+const style = document.createElement('style');
+style.textContent = floatAnimation;
+document.head.appendChild(style);

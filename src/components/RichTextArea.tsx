@@ -228,13 +228,13 @@ export const RichTextArea = ({
                 return (
                     <pre 
                         {...attributes} 
-                        className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md my-2 font-mono text-sm overflow-x-auto"
+                        className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md my-2 font-mono text-sm whitespace-pre-wrap"
                     >
                         {children}
                     </pre>
                 );
             case 'code-line':
-                return children;
+                return <div className="whitespace-pre-wrap">{children}</div>;
             case 'link':
                 return (
                     <a 
