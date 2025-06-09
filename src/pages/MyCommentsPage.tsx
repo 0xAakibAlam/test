@@ -65,10 +65,6 @@ export const MyCommentsPage = () => {
       <Navbar />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
 
-      <div className="flex items-center gap-2 mb-6">
-        <h1 className="text-3xl font-bold">My Comments</h1>
-      </div>
-
         {!isConnected ? (
           <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
           <div className="flex items-center gap-3 mb-2 animate-in fade-in-50 zoom-in-50 duration-700">

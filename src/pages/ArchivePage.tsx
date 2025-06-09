@@ -54,8 +54,6 @@ const ArchivePage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-
-        <h1 className="text-3xl font-bold mb-6">Archived Questions</h1>
         
         {isLoading ? (
           <div className="flex justify-center items-center py-10">
