@@ -98,7 +98,10 @@ export const PostCard = ({ question }: QuestionCardProps) => {
                 </CardTitle>
                 <div className="text-sm text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-4 w-4" />
-                  <span>Expires {formatDistanceToNow(new Date(parseInt(question.endTime) * 1000), { addSuffix: true })}</span>
+                  <span>
+                  {new Date(Number(question.endTime) * 1000) > new Date() ? 'Archive' : 'Archived'}{' '}
+                  {formatDistanceToNow(new Date(Number(question.endTime) * 1000), { addSuffix: true })}
+                  </span>
                 </div>
               </div>
             </CardHeader>
@@ -156,7 +159,10 @@ export const PostCard = ({ question }: QuestionCardProps) => {
                       {question.questionTitle}
                     </CardTitle>
                     <div className="mt-2 text-sm text-muted-foreground">
-                      {formatDistanceToNow(new Date(parseInt(question.endTime) * 1000), { addSuffix: true })}
+                    <span>
+                      {new Date(Number(question.endTime) * 1000) > new Date() ? 'Archive' : 'Archived'}{' '}
+                      {formatDistanceToNow(new Date(Number(question.endTime) * 1000), { addSuffix: true })}
+                    </span>
                     </div>
                   </div>
                   <div className="flex-shrink-0 flex items-center">
