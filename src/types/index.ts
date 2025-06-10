@@ -1,16 +1,15 @@
-export interface Question {
-  questionId: string,
-  questionTitle: string,
-  question: string,
+export interface Post {
+  postId: string,
+  postTitle: string,
+  postBody: string,
   owner: string,
   endTime: string,
-  sentToHeaven: boolean,
+  archived: boolean,
 }
 
-export interface Answer {
-  questionId: string;
-  answerId: string;
-  answer: string;
+export interface Comment {
+  postId: string;
+  comment: string;
   owner: string;
 }
 

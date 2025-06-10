@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { addQuestion } from "@/services/AnonqaService";
+import { addPost } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
 import { RichTextArea } from "./RichTextArea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,22 +8,22 @@ import { toast } from "@/components/ui/sonner";
 import { MessageSquare } from "lucide-react";
 import { Textarea } from "./ui/textarea";
 
-interface QuestionFormProps {
-  onQuestionAdded?: () => void;
+interface PostFormProps {
+  onPostAdded?: () => void;
 }
 
-export const PostForm = ({ onQuestionAdded }: QuestionFormProps) => {
+export const PostForm = ({ onPostAdded }: PostFormProps) => {
   const [title, setTitle] = useState("");
-  const [question, setQuestion] = useState("");
-  const [days, setDays] = useState(7);
+  const [postBody, setPostBody] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
+  const [resetKey, setResetKey] = useState(0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!isConnected) {
-      toast.error("Please connect your wallet to ask a question");
+      toast.error("Please connect your wallet to ask a post");
       return;
     }
 
@@ -37,35 +37,31 @@ export const PostForm = ({ onQuestionAdded }: QuestionFormProps) => {
       return;
     }
     
-    if (!question.trim()) {
-      toast.error("Please enter a question");
+    if (!postBody.trim()) {
+      toast.error("Please enter a post");
       return;
     }
     
     setIsSubmitting(true);
     
     try {
-      const endDate = new Date();
-      endDate.setDate(endDate.getDate() + days);
-      const timestamp = Math.floor(endDate.getTime() / 1000);
       
-      await addQuestion({ 
-        questionTitle: title.trim(), 
-        question: question.trim(), 
-        endTime: timestamp.toString() 
+      await addPost({ 
+        postTitle: title.trim(), 
+        postBody: postBody.trim(), 
       });
       
       setTitle("");
-      setQuestion("");
-      setDays(7);
+      setPostBody("");
+      setResetKey(prev => prev + 1);
       toast.success("Question posted successfully!");
       
-      if (onQuestionAdded) {
-        onQuestionAdded();
+      if (onPostAdded) {
+        onPostAdded();
       }
     } catch (error) {
-      console.error("Error posting question:", error);
-      toast.error("Failed to post question. Please try again.");
+      console.error("Error posting post:", error);
+      toast.error("Failed to post post. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -91,10 +87,11 @@ export const PostForm = ({ onQuestionAdded }: QuestionFormProps) => {
             </div>
           <RichTextArea
             placeholder="Share anything anonymously..."
-            value={question}
-            onChange={setQuestion}
+            value={postBody}
+            onChange={setPostBody}
             className="min-h-80 resize-none overflow-hidden mb-4"
             disabled={isSubmitting || !isConnected}
+            key={resetKey}
           />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end">
             <Button 

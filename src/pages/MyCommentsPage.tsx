@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import { getUserAnswers, getQuestionById } from "@/services/AnonqaService";
-import { Answer } from "@/types";
+import { getUserComments, getPostById } from "@/services/AnonqaService";
+import { Comment } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
 import { MessageCircle, Wallet, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CommentCard } from "@/components/CommentCard";
 
-interface AnswerWithQuestionTitle extends Answer {
-  questionTitle?: string;
+interface CommentWithPostTitle extends Comment {
+  postTitle?: string;
 }
 
 export const MyCommentsPage = () => {
-  const [answers, setAnswers] = useState<AnswerWithQuestionTitle[]>([]);
+  const [comments, setComments] = useState<CommentWithPostTitle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { address, isConnected } = useAppKitAccount();
   const navigate = useNavigate();
@@ -27,28 +27,28 @@ export const MyCommentsPage = () => {
       
       setIsLoading(true);
       try {
-        const answersData = await getUserAnswers(address);
+        const commentsData = await getUserComments(address);
         
         // Fetch the question text for each answer
         const answersWithQuestionTitle = await Promise.all(
-          answersData.map(async (answer) => {
+          commentsData.map(async (comment) => {
             try {
-              const question = await getQuestionById(answer.questionId);
+              const post = await getPostById(comment.postId);
               return {
-                ...answer,
-                questionTitle: question?.questionTitle || "Question not found"
+                ...comment,
+                postTitle: post?.postTitle || "Question not found"
               };
             } catch (error) {
               console.error("Error fetching question:", error);
               return {
-                ...answer,
-                questionTitle: "Question not found"
+                ...comment,
+                postTitle: "Question not found"
               };
             }
           })
         );
         
-        setAnswers(answersWithQuestionTitle);
+        setComments(answersWithQuestionTitle);
       } catch (error) {
         console.error("Error fetching user comments:", error);
         toast.error("Failed to load my comments");
@@ -94,10 +94,10 @@ export const MyCommentsPage = () => {
               ))}
             </div>
           </div>
-        ) : answers.length > 0 ? (
+        ) : comments.length > 0 ? (
           <div>
-            {answers.map((answer) => (
-              <CommentCard answer={answer} questionTitle={answer.questionTitle} />
+            {comments.map((comment) => (
+              <CommentCard comment={comment} postTitle={comment.postTitle} />
             ))}
           </div>
         ) : (

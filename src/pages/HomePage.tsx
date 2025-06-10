@@ -2,15 +2,15 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { PostForm } from "@/components/PostForm";
 import { PostCard } from "@/components/PostCard";
-import { getActiveQuestions } from "@/services/AnonqaService";
-import { Question } from "@/types";
+import { getActivePosts } from "@/services/AnonqaService";
+import { Post } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const HomePage = () => {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -18,10 +18,8 @@ const HomePage = () => {
   const fetchQuestions = async () => {
     setIsLoading(true);
     try {
-      console.log("data fetching...");
-      const data = await getActiveQuestions();
-      console.log("data fetched successfully!! ", data)
-      setQuestions(data);
+      const data = await getActivePosts();
+      setPosts(data);
     } catch (error) {
       console.error("Error fetching questions:", error);
       toast.error("Failed to load questions");
@@ -35,9 +33,9 @@ const HomePage = () => {
   }, []);
 
   // Filter questions based on search term
-  const filteredQuestions = questions.filter(question => 
-    question.questionTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    question.question.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredQuestions = posts.filter(post => 
+    post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Sort questions based on expiration time
@@ -55,7 +53,7 @@ const HomePage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-        <PostForm onQuestionAdded={fetchQuestions} />
+        <PostForm onPostAdded={fetchQuestions} />
 
         <h2 className="text-xl sm:text-2xl font-bold mb-4">Posts</h2>
 
@@ -100,8 +98,8 @@ const HomePage = () => {
           </div>
         </div>
         ) : sortedAndFilteredQuestions.length > 0 ? (
-          sortedAndFilteredQuestions.map((question) => (
-            <PostCard key={question.questionId} question={question} />
+          sortedAndFilteredQuestions.map((post) => (
+            <PostCard key={post.postId} post={post} />
           ))
         ) : searchTerm ? (
           <div className="text-center py-10">

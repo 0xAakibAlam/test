@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { CommentForm } from "@/components/CommentForm";
-import { getQuestionById, getAnswersForQuestion } from "@/services/AnonqaService";
-import { Question, Answer } from "@/types";
+import { getPostById, getCommentsForPost } from "@/services/AnonqaService";
+import { Post, Comment } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "@/components/ui/sonner";
@@ -13,8 +13,8 @@ import { RichTextRenderer } from "@/components/RichTextRenderer";
 
 export const PostInfoPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [question, setQuestion] = useState<Question | null>(null);
-  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [post, setPost] = useState<Post | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchData = async () => {
@@ -22,18 +22,18 @@ export const PostInfoPage = () => {
     
     setIsLoading(true);
     try {
-      const [questionData, answersData] = await Promise.all([
-        getQuestionById(id),
-        getAnswersForQuestion(id)
+      const [postData, commentData] = await Promise.all([
+        getPostById(id),
+        getCommentsForPost(id)
       ]);
       
-      if (questionData) {
-        setQuestion(questionData);
+      if (postData) {
+        setPost(postData);
       } else {
-        toast.error("Question not found");
+        toast.error("Post not found");
       }
       
-      setAnswers(answersData || []);
+      setComments(commentData || []);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to load question and answers");
@@ -72,36 +72,36 @@ export const PostInfoPage = () => {
               ))}
             </div>
           </div>
-        ) : question ? (
+        ) : post ? (
           <div>
             <Card className="mb-6 border-l-4 border-l-primary/20">
               <CardHeader className="pb-2">
                 <div className="flex flex-col gap-2">
-                  <CardTitle className="text-xl md:text-2xl font-semibold line-clamp-2">{question.questionTitle}</CardTitle>
+                  <CardTitle className="text-xl md:text-2xl font-semibold line-clamp-2">{post.postTitle}</CardTitle>
                   <div className="text-sm text-muted-foreground flex items-center gap-1.5">
                     <Clock className="h-4 w-4" />
                     <span>
-                      {new Date(Number(question.endTime) * 1000) > new Date() ? 'Archive' : 'Archived'}{' '}
-                      {formatDistanceToNow(new Date(Number(question.endTime) * 1000), { addSuffix: true })}
+                      {new Date(Number(post.endTime) * 1000) > new Date() ? 'Archive' : 'Archived'}{' '}
+                      {formatDistanceToNow(new Date(Number(post.endTime) * 1000), { addSuffix: true })}
                     </span>
                   </div>
                 </div>
               </CardHeader>
 
               <CardContent className="pt-4 pb-6">
-                <RichTextRenderer content={question.question} />
+                <RichTextRenderer content={post.postBody} />
               </CardContent>
             </Card>
 
-            <CommentForm questionId={id as string} onAnswerAdded={fetchData} />
+            <CommentForm postId={id as string} onCommentAdded={fetchData} />
 
             <h2 className="text-xl font-bold mb-4 mt-8">
               Answers
             </h2>
 
-            {answers.length > 0 ? (
-              answers.map((answer) => (
-                <CommentCard answer={answer} questionTitle={""}/>
+            {comments.length > 0 ? (
+              comments.map((comment) => (
+                <CommentCard comment={comment} postTitle={""}/>
               ))
             ) : (
               <div className="text-center py-10 bg-muted/20 rounded-lg">

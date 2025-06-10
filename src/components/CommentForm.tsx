@@ -1,27 +1,27 @@
 
 import { useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { addAnswer } from "@/services/AnonqaService";
+import { addComment } from "@/services/AnonqaService";
 import { Button } from "@/components/ui/button";
 import { RichTextArea } from "./RichTextArea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import { MessageSquare } from "lucide-react";
 
-interface AnswerFormProps {
-  questionId: string;
-  onAnswerAdded?: () => void;
+interface CommentFormProps {
+  postId: string;
+  onCommentAdded?: () => void;
 }
 
-export const CommentForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
-  const [answer, setAnswer] = useState("");
+export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
+  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!answer.trim()) {
+    if (!comment.trim()) {
       toast.error("Please enter an answer");
       return;
     }
@@ -34,17 +34,16 @@ export const CommentForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
     setIsSubmitting(true);
     
     try {
-      console.log("questId: ", questionId);
-      await addAnswer({ 
-        questionId, 
-        answer: answer.trim() 
+      await addComment({ 
+        postId, 
+        comment: comment.trim() 
       });
       
-      setAnswer("");
+      setComment("");
       toast.success("Answer posted successfully!");
       
-      if (onAnswerAdded) {
-        onAnswerAdded();
+      if (onCommentAdded) {
+        onCommentAdded();
       }
     } catch (error) {
       console.error("Error posting answer:", error);
@@ -63,8 +62,8 @@ export const CommentForm = ({ questionId, onAnswerAdded }: AnswerFormProps) => {
         <form onSubmit={handleSubmit}>
           <RichTextArea
             placeholder="Add Comments..."
-            value={answer}
-            onChange={setAnswer}
+            value={comment}
+            onChange={setComment}
             className="min-h-60 resize-none overflow-hidden mb-4"
             disabled={isSubmitting || !isConnected}
           />

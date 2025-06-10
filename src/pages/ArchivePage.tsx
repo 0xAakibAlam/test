@@ -3,15 +3,15 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { getArchivedQuestions } from "@/services/AnonqaService";
-import { Question } from "@/types";
+import { getActivePosts } from "@/services/AnonqaService";
+import { Post } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown, Archive } from "lucide-react";
 
 export const ArchivePage = () => {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -20,8 +20,8 @@ export const ArchivePage = () => {
     const fetchArchivedQuestions = async () => {
       setIsLoading(true);
       try {
-        const data = await getArchivedQuestions();
-        setQuestions(data);
+        const data = await getActivePosts();
+        setPosts(data);
       } catch (error) {
         console.error("Error fetching archived questions:", error);
         toast.error("Failed to load archived questions");
@@ -34,9 +34,9 @@ export const ArchivePage = () => {
   }, []);
 
   // Filter questions based on search term
-  const filteredQuestions = questions.filter(question => 
-    question.questionTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    question.question.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredQuestions = posts.filter(post => 
+    post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Sort questions based on expiration time
@@ -96,8 +96,8 @@ export const ArchivePage = () => {
                 <ArrowUpDown className="h-4 w-4" />
               </Button>
             </div>
-            {sortedAndFilteredQuestions.map((question) => (
-              <PostCard key={question.questionId} question={question} />
+            {sortedAndFilteredQuestions.map((post) => (
+              <PostCard key={post.postId} post={post} />
             ))}
           </div>
         ) : (

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { getUserQuestions } from "@/services/AnonqaService";
-import { Question } from "@/types";
+import { getUserPosts } from "@/services/AnonqaService";
+import { Post } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Search, ArrowUpDown, Wallet, MessageSquare, ArrowRight } from "lucide-r
 import { useNavigate } from "react-router-dom";
 
 export const MyPostsPage = () => {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -27,8 +27,8 @@ export const MyPostsPage = () => {
       
       setIsLoading(true);
       try {
-        const data = await getUserQuestions(address);
-        setQuestions(data);
+        const data = await getUserPosts(address);
+        setPosts(data);
       } catch (error) {
         console.error("Error fetching user questions:", error);
         toast.error("Failed to load my posts");
@@ -41,9 +41,9 @@ export const MyPostsPage = () => {
   }, [address, isConnected]);
 
   // Filter questions based on search term
-  const filteredQuestions = questions.filter(question => 
-    question.questionTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    question.question.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredQuestions = posts.filter(post => 
+    post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Sort questions based on expiration time
@@ -113,8 +113,8 @@ export const MyPostsPage = () => {
                 <ArrowUpDown className="h-4 w-4" />
               </Button>
             </div>
-            {sortedAndFilteredQuestions.map((question) => (
-              <PostCard key={question.questionId} question={question} />
+            {sortedAndFilteredQuestions.map((post) => (
+              <PostCard key={post.postId} post={post} />
             ))}
           </div>
         ) : (

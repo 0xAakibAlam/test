@@ -1,57 +1,35 @@
-export const masterAnonqaAddress = "0x6578C29E33c9e9f4882585Fd6a485c1ff83E8F37";
-export const admin = "";
+export const masterdXAddress = "0x28f09f45DAE86858c47F856515b35771093b9238";
+export const admin = "0xEBA436aE4012D8194a5b44718a8ba6ec553241bE";
 
-export const masterAnonqaABI = [
+export const masterdXABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
-  { inputs: [], name: "AnswerAlreadyGiven", type: "error" },
-  { inputs: [], name: "EmptyQuestion", type: "error" },
-  { inputs: [], name: "EmptyQuestionTitle", type: "error" },
+  { inputs: [], name: "EmptyPost", type: "error" },
+  { inputs: [], name: "EmptyPostTitle", type: "error" },
   { inputs: [], name: "EnforcedPause", type: "error" },
   { inputs: [], name: "ExpectedPause", type: "error" },
   { inputs: [], name: "InvalidInitialization", type: "error" },
-  { inputs: [], name: "InvalidQuestion", type: "error" },
+  { inputs: [], name: "InvalidPost", type: "error" },
   { inputs: [], name: "NotAdmin", type: "error" },
   { inputs: [], name: "NotBot", type: "error" },
   { inputs: [], name: "NotInitializing", type: "error" },
-  { inputs: [], name: "QuestionAlreadyBorned", type: "error" },
-  { inputs: [], name: "QuestionIsAlive", type: "error" },
-  { inputs: [], name: "QuestionIsDead", type: "error" },
-  { inputs: [], name: "QuestionLifeTimeTooMuch", type: "error" },
-  { inputs: [], name: "QuestionNotBorned", type: "error" },
-  { inputs: [], name: "QuestionSentToHeaven", type: "error" },
+  { inputs: [], name: "PostAlreadyArchived", type: "error" },
+  { inputs: [], name: "PostAlreadyShared", type: "error" },
+  { inputs: [], name: "PostIsAlive", type: "error" },
+  { inputs: [], name: "PostTitleLengthTooBig", type: "error" },
   { inputs: [], name: "ReentrancyGuardReentrantCall", type: "error" },
   {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "_anonqaConfig",
-        type: "address",
-      },
-    ],
-    name: "AnonqaConfigUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: false,
         internalType: "bytes32",
-        name: "_questionId",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "_answerId",
+        name: "_postId",
         type: "bytes32",
       },
       {
         indexed: false,
         internalType: "string",
-        name: "_answer",
+        name: "_comment",
         type: "string",
       },
       {
@@ -61,7 +39,20 @@ export const masterAnonqaABI = [
         type: "address",
       },
     ],
-    name: "AnswerPosted",
+    name: "CommentAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "_freeWindowOpen",
+        type: "bool",
+      },
+    ],
+    name: "FreeWindowOpenUpdated",
     type: "event",
   },
   {
@@ -70,7 +61,7 @@ export const masterAnonqaABI = [
       {
         indexed: false,
         internalType: "bytes32",
-        name: "_questionId",
+        name: "_postId",
         type: "bytes32",
       },
     ],
@@ -96,11 +87,11 @@ export const masterAnonqaABI = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "_maxQuestionLifeTime",
+        name: "_maxPostTitleLength",
         type: "uint256",
       },
     ],
-    name: "MaxQuestionLifeTimeUpdated",
+    name: "MaxPostTitleLengthUpdated",
     type: "event",
   },
   {
@@ -122,19 +113,19 @@ export const masterAnonqaABI = [
       {
         indexed: false,
         internalType: "bytes32",
-        name: "_questionId",
+        name: "_postId",
         type: "bytes32",
       },
       {
         indexed: false,
         internalType: "string",
-        name: "_questionTitle",
+        name: "_postTitle",
         type: "string",
       },
       {
         indexed: false,
         internalType: "string",
-        name: "_question",
+        name: "_postBody",
         type: "string",
       },
       {
@@ -150,7 +141,33 @@ export const masterAnonqaABI = [
         type: "uint256",
       },
     ],
-    name: "QuestionBorned",
+    name: "PostAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_maxQuestionLifeTime",
+        type: "uint256",
+      },
+    ],
+    name: "PostLifeTimeUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "_tokenRequiredPerPost",
+        type: "uint256",
+      },
+    ],
+    name: "TokenRequiredPerPostUpdated",
     type: "event",
   },
   {
@@ -167,26 +184,47 @@ export const masterAnonqaABI = [
     type: "event",
   },
   {
+    anonymous: false,
     inputs: [
-      { internalType: "address", name: "_anonqaConfig", type: "address" },
       {
-        internalType: "uint256",
-        name: "_maxQuestionLifeTime",
-        type: "uint256",
+        indexed: true,
+        internalType: "address",
+        name: "_dXConfig",
+        type: "address",
       },
     ],
-    name: "__MasterQA_Init",
+    name: "dXConfigUpdated",
+    type: "event",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "_dXConfig", type: "address" },
+      { internalType: "uint256", name: "_postLifeTime", type: "uint256" },
+      { internalType: "uint256", name: "_maxPostTitleLength", type: "uint256" },
+    ],
+    name: "__MasterdX_Init",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [],
-    name: "anonqaConfig",
-    outputs: [
-      { internalType: "contract IAnonqaConfig", name: "", type: "address" },
+    inputs: [
+      { internalType: "bytes32", name: "_postId", type: "bytes32" },
+      { internalType: "string", name: "_comment", type: "string" },
     ],
-    stateMutability: "view",
+    name: "addComment",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "string", name: "_postTitle", type: "string" },
+      { internalType: "string", name: "_postBody", type: "string" },
+    ],
+    name: "addPost",
+    outputs: [{ internalType: "bytes32", name: "_postId", type: "bytes32" }],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -194,19 +232,27 @@ export const masterAnonqaABI = [
       { internalType: "bytes32", name: "", type: "bytes32" },
       { internalType: "uint256", name: "", type: "uint256" },
     ],
-    name: "answerData",
+    name: "commentData",
     outputs: [
-      { internalType: "bytes32", name: "questionId", type: "bytes32" },
-      { internalType: "bytes32", name: "answerId", type: "bytes32" },
-      { internalType: "string", name: "answer", type: "string" },
+      { internalType: "bytes32", name: "postId", type: "bytes32" },
+      { internalType: "string", name: "comment", type: "string" },
       { internalType: "address", name: "owner", type: "address" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
+    inputs: [],
+    name: "dXConfig",
+    outputs: [
+      { internalType: "contract IdXConfig", name: "", type: "address" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
-      { internalType: "bytes32[]", name: "_questionIds", type: "bytes32[]" },
+      { internalType: "bytes32[]", name: "_postIds", type: "bytes32[]" },
     ],
     name: "funeral",
     outputs: [],
@@ -214,17 +260,16 @@ export const masterAnonqaABI = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "bytes32", name: "_questionId", type: "bytes32" }],
-    name: "getAnswerInfo",
+    inputs: [{ internalType: "bytes32", name: "_postId", type: "bytes32" }],
+    name: "getCommentsInfo",
     outputs: [
       {
         components: [
-          { internalType: "bytes32", name: "questionId", type: "bytes32" },
-          { internalType: "bytes32", name: "answerId", type: "bytes32" },
-          { internalType: "string", name: "answer", type: "string" },
+          { internalType: "bytes32", name: "postId", type: "bytes32" },
+          { internalType: "string", name: "comment", type: "string" },
           { internalType: "address", name: "owner", type: "address" },
         ],
-        internalType: "struct IMasterAnonqa.AnswerInfo[]",
+        internalType: "struct IMasterdX.CommentInfo[]",
         name: "",
         type: "tuple[]",
       },
@@ -233,19 +278,19 @@ export const masterAnonqaABI = [
     type: "function",
   },
   {
-    inputs: [{ internalType: "bytes32", name: "_questionId", type: "bytes32" }],
-    name: "getQuestionInfo",
+    inputs: [{ internalType: "bytes32", name: "_postId", type: "bytes32" }],
+    name: "getPostInfo",
     outputs: [
       {
         components: [
-          { internalType: "bytes32", name: "questionId", type: "bytes32" },
-          { internalType: "string", name: "questionTitle", type: "string" },
-          { internalType: "string", name: "question", type: "string" },
+          { internalType: "bytes32", name: "postId", type: "bytes32" },
+          { internalType: "string", name: "postTitle", type: "string" },
+          { internalType: "string", name: "postBody", type: "string" },
           { internalType: "address", name: "owner", type: "address" },
           { internalType: "uint256", name: "endTime", type: "uint256" },
-          { internalType: "bool", name: "sentToHeaven", type: "bool" },
+          { internalType: "bool", name: "archived", type: "bool" },
         ],
-        internalType: "struct IMasterAnonqa.QuestionInfo",
+        internalType: "struct IMasterdX.PostInfo",
         name: "",
         type: "tuple",
       },
@@ -255,7 +300,7 @@ export const masterAnonqaABI = [
   },
   {
     inputs: [],
-    name: "maxQuestionLifeTime",
+    name: "maxPostTitleLength",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -275,65 +320,54 @@ export const masterAnonqaABI = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "bytes32", name: "_questionId", type: "bytes32" },
-      { internalType: "string", name: "_answer", type: "string" },
-    ],
-    name: "postAnswer",
-    outputs: [{ internalType: "bytes32", name: "_answerId", type: "bytes32" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      { internalType: "string", name: "_questionTitle", type: "string" },
-      { internalType: "string", name: "_question", type: "string" },
-      { internalType: "uint256", name: "_endTime", type: "uint256" },
-    ],
-    name: "postQuestion",
-    outputs: [
-      { internalType: "bytes32", name: "_questionId", type: "bytes32" },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
-    name: "questionData",
+    name: "postData",
     outputs: [
-      { internalType: "bytes32", name: "questionId", type: "bytes32" },
-      { internalType: "string", name: "questionTitle", type: "string" },
-      { internalType: "string", name: "question", type: "string" },
+      { internalType: "bytes32", name: "postId", type: "bytes32" },
+      { internalType: "string", name: "postTitle", type: "string" },
+      { internalType: "string", name: "postBody", type: "string" },
       { internalType: "address", name: "owner", type: "address" },
       { internalType: "uint256", name: "endTime", type: "uint256" },
-      { internalType: "bool", name: "sentToHeaven", type: "bool" },
+      { internalType: "bool", name: "archived", type: "bool" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-    name: "questionIds",
+    name: "postIds",
     outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
     stateMutability: "view",
     type: "function",
   },
   {
+    inputs: [],
+    name: "postLifeTime",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "_maxQuestionLifeTime",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "_maxPostTitleLength", type: "uint256" },
     ],
-    name: "setMaxQuestionLifeTime",
+    name: "setMaxPostTitleLength",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "_postLifeTime", type: "uint256" },
+    ],
+    name: "setPostLifeTime",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
-    name: "totalQuestions",
+    name: "totalPosts",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
@@ -346,10 +380,8 @@ export const masterAnonqaABI = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "address", name: "_anonqaConfig", type: "address" },
-    ],
-    name: "updateAnonqaConfig",
+    inputs: [{ internalType: "address", name: "_dXConfig", type: "address" }],
+    name: "updatedXConfig",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

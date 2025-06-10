@@ -1,4 +1,4 @@
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useState, useMemo, useEffect } from 'react';
 import { createEditor, Descendant, Editor, Element as SlateElement, Transforms, Range, BaseEditor } from 'slate';
 import { Editable, Slate, withReact, ReactEditor } from 'slate-react';
 import { withHistory, HistoryEditor } from 'slate-history';
@@ -19,6 +19,7 @@ interface CustomInputBoxProps {
     placeholder?: string;
     disabled?: boolean;
     className?: string;
+    key?: string | number;
 }
 
 type ParagraphElement = { type: 'paragraph'; align?: 'left' | 'center' | 'right' | 'justify'; children: CustomText[] };
@@ -205,10 +206,23 @@ export const RichTextArea = ({
     placeholder = "",
     disabled = false,
     className = "",
+    key,
 }: CustomInputBoxProps) => {
     const [editor] = useState(() => withLinks(withHistory(withReact(createEditor()))));
     const [activeGroup, setActiveGroup] = useState<string | null>(null);
     const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (key) {
+            Transforms.delete(editor, {
+                at: {
+                    anchor: Editor.start(editor, []),
+                    focus: Editor.end(editor, []),
+                },
+            });
+            Transforms.insertNodes(editor, initialValue);
+        }
+    }, [key, editor]);
 
     const renderElement = useCallback((props: any) => {
         const { attributes, children, element } = props;
@@ -219,11 +233,11 @@ export const RichTextArea = ({
              case 'heading':
                 return <h3 style={{ ...style, fontSize: '1.5em' }} className="text-2xl font-bold my-2" {...attributes}>{children}</h3>;
             case 'bulleted-list':
-                return <ul style={style} className="list-disc pl-6 my-2" {...attributes}>{children}</ul>;
+                return <ul style={style} className="list-disc pl-6 my-2 text-sm md:text-lg" {...attributes}>{children}</ul>;
             case 'list-item':
-                return <li style={style} className="my-1" {...attributes}>{children}</li>;
+                return <li style={style} className="my-1 text-sm md:text-lg" {...attributes}>{children}</li>;
             case 'numbered-list':
-                return <ol style={style} className="list-decimal pl-6 my-2" {...attributes}>{children}</ol>;
+                return <ol style={style} className="list-decimal pl-6 my-2 text-sm md:text-lg" {...attributes}>{children}</ol>;
             case 'code-block':
                 return (
                     <pre 
@@ -242,7 +256,7 @@ export const RichTextArea = ({
                         href={element.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline cursor-pointer"
+                        className="text-blue-600 underline cursor-pointer"
                         onClick={(e) => {
                             e.stopPropagation();
                             window.open(element.url, '_blank');

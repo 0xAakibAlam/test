@@ -15,11 +15,11 @@ const renderElement = (props: any) => {
     case 'heading':
       return <h3 style={{ ...style, fontSize: '1.5em' }} className="text-2xl font-bold my-2" {...attributes}>{children}</h3>;
     case 'bulleted-list':
-      return <ul style={style} className="list-disc pl-6 my-2" {...attributes}>{children}</ul>;
+      return <ul style={style} className="list-disc pl-6 my-2 text-sm md:text-lg" {...attributes}>{children}</ul>;
     case 'list-item':
-      return <li style={style} className="my-1" {...attributes}>{children}</li>;
+      return <li style={style} className="my-1 text-sm md:text-lg" {...attributes}>{children}</li>;
     case 'numbered-list':
-      return <ol style={style} className="list-decimal pl-6 my-2" {...attributes}>{children}</ol>;
+      return <ol style={style} className="list-decimal pl-6 my-2 text-sm md:text-lg" {...attributes}>{children}</ol>;
     case 'code-block':
       return (
         <pre 

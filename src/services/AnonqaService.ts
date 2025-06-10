@@ -1,5 +1,5 @@
-import { Question, Answer } from "@/types";
-import { masterAnonqaAddress, masterAnonqaABI, admin } from "@/contracts/MasterAnonqa";
+import { Post, Comment } from "@/types";
+import { masterdXAddress, masterdXABI, admin } from "@/contracts/MasterdX";
 import { ethers } from "ethers";
 import { MulticallWrapper } from "ethers-multicall-provider";
 
@@ -19,8 +19,12 @@ async function getReadOnlyContract(contractAddress, contractABI) {
   return contractInstance;
 }
 
-async function getContract(contractAddress, contractABI) {
-  const provider = new ethers.BrowserProvider(window.ethereum);
+async function getContract(contractAddress: string, contractABI: any) {
+  if (!window.ethereum) {
+    throw new Error("Please install MetaMask to use this feature");
+  }
+
+  const provider = new ethers.BrowserProvider(window.ethereum as any);
   await provider.send("eth_requestAccounts", []);
   const signer = await provider.getSigner();
   const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
@@ -28,111 +32,108 @@ async function getContract(contractAddress, contractABI) {
 }
 
 // Question service functions
-export const getActiveQuestions = async (): Promise<Question[]> => {
+export const getActivePosts = async (): Promise<Post[]> => {
   try {
-    console.log("getting contract...");
-    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
-    console.log("contract fetched...");
-    const numOfQuestion = await masterAnonqa.totalQuestions();
-    console.log("total questions: ", numOfQuestion);
+    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
+    const numOfPost = await masterdX.totalPosts();
 
-    let questionInfos: any = [];
-    for (let i=0; i<numOfQuestion; i++) {
-      const questionId = await masterAnonqa.questionIds(i);
-      console.log("Raw questionId:", questionId);
+    let postInfos: any = [];
+    for (let i=0; i<numOfPost; i++) {
+      const postId = await masterdX.postIds(i);
+      console.log("Raw postId:", postId);
       
-      const questionInfo = await masterAnonqa.getQuestionInfo(questionId);
-      if (!questionInfo.sentToHeaven) {
-        questionInfos.push(questionInfo);
+      const postInfo = await masterdX.getPostInfo(postId);
+      if (!postInfo.archived) {
+        postInfos.push(postInfo);
       }
     }
     
-    return questionInfos.map(q => ({
-      questionId: q.questionId,
+    return postInfos.map(q => ({
+      postId: q.postId,
       owner: q.owner,
-      questionTitle: q.questionTitle,
-      question: q.question,
+      postTitle: q.postTitle,
+      postBody: q.postBody,
       endTime: q.endTime,
-      sentToHeaven: q.sentToHeaven
+      archived: q.archived
     }));
   } catch (error) {
-    console.error("Error in getQuestions:", error);
+    console.error("Error in getPosts:", error);
     // Fallback to return an empty array if there's an error
     return [];
   }
 };
 
-export const getQuestionById = async (id: string): Promise<Question | undefined> => {
+export const getPostById = async (id: string): Promise<Post | undefined> => {
   try {
-    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
-    const questionInfo = await masterAnonqa.getQuestionInfo(id);
+    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
+    const postInfo = await masterdX.getPostInfo(id);
     
     return {
-      questionId: questionInfo.questionId,
-      questionTitle: questionInfo.questionTitle,
-      question: questionInfo.question,
-      owner: questionInfo.owner,
-      endTime: questionInfo.endTime,
-      sentToHeaven: questionInfo.sentToHeaven,
+      postId: postInfo.postId,
+      postTitle: postInfo.postTitle,
+      postBody: postInfo.postBody,
+      owner: postInfo.owner,
+      endTime: postInfo.endTime,
+      archived: postInfo.sentToHeaven,
     };
   } catch (error) {
-    console.error("Error in getQuestionById:", error);
+    console.error("Error in getPostById:", error);
     return undefined;
   }
 };
 
-export const getUserQuestions = async (owner: string): Promise<Question[]> => {
+export const getUserPosts = async (owner: string): Promise<Post[]> => {
   try {
-    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
-    const numOfQuestion = await masterAnonqa.totalQuestions();
-    console.log(numOfQuestion);
+    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
+    const numOfPost = await masterdX.totalPosts();
+    console.log(numOfPost);
 
-    let questionInfos: any = [];
-    for (let i=0; i<numOfQuestion; i++) {
-      const questionId = await masterAnonqa.questionIds(i);
-      const questionInfo = await masterAnonqa.getQuestionInfo(questionId);
-      if (questionInfo.owner.toLowerCase() == owner.toLowerCase()) {
-        questionInfos.push(questionInfo);
+    let postInfos: any = [];
+    for (let i=0; i<numOfPost; i++) {
+      const postId = await masterdX.postIds(i);
+      const postInfo = await masterdX.getPostInfo(postId);
+      if (postInfo.owner.toLowerCase() == owner.toLowerCase()) {
+        postInfos.push(postInfo);
       }
     }
     
-    return questionInfos.map(q => ({
-      questionId: q.questionId,
+    return postInfos.map(q => ({
+      postId: q.postId,
       owner: q.owner,
-      questionTitle: q.questionTitle,
-      question: q.question,
+      postTitle: q.postTitle,
+      postBody: q.postBody,
       endTime: q.endTime,
-      sentToHeaven: q.sentToHeaven,
+      archived: q.archived,
     }));
   } catch (error) {
-    console.error("Error in getUserQuestions:", error);
+    console.error("Error in getUserPosts:", error);
     return [];
   }
 };
 
-export const getArchivedQuestions = async (): Promise<Question[]> => {
+export const getArchivedPosts = async (): Promise<Post[]> => {
   try {
-    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
-    const numOfQuestion = await masterAnonqa.totalQuestions();
-    console.log(numOfQuestion);
+    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
+    const numOfPost = await masterdX.totalPosts();
+    console.log(numOfPost);
 
-    let questionInfos: any = [];
-    for (let i=0; i<numOfQuestion; i++) {
-      const questionId = await masterAnonqa.questionIds(i);
-      const questionInfo = await masterAnonqa.getQuestionInfo(questionId);
-      console.log(questionInfo);
-      if (questionInfo.sentToHeaven) {
-        questionInfos.push(questionInfo);
+    let postInfos: any = [];
+    for (let i=0; i<numOfPost; i++) {
+      const postId = await masterdX.postIds(i);
+      const postInfo = await masterdX.getPostInfo(postId);
+      console.log(postInfo);
+      if (postInfo.archived) {
+        postInfos.push(postInfo);
       }
     }
     
-    return questionInfos.map(q => ({
-      questionId: q.questionId,
+    return postInfos.map(q => ({
+      postId: q.postId,
       owner: q.owner,
-      questionTitle: q.questionTitle,
-      question: q.question,
+      postTitle: q.postTitle,
+      postBody: q.postBody,
       endTime: q.endTime,
-      sentToHeaven: q.sentToHeaven,
+      archived: q.archived,
     }));
   } catch (error) {
     console.error("Error in getArchivedQuestions:", error);
@@ -140,129 +141,131 @@ export const getArchivedQuestions = async (): Promise<Question[]> => {
   }
 };
 
-export const addQuestion = async (questionData: { questionTitle: string, question: string, endTime: string }) => {
+export const addPost = async (postData: { postTitle: string, postBody: string }) => {
   try {
-    const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    const masterdX = await getContract(masterdXAddress, masterdXABI);
     
-    const gasLimit = await masterAnonqa.postQuestion.estimateGas(
-      questionData.questionTitle,
-      questionData.question,
-      questionData.endTime
+    const gasLimit = await masterdX.addPost.estimateGas(
+      postData.postTitle,
+      postData.postBody
     );
     const estimatedGas = gasLimit * BigInt(15) / BigInt(10);
 
-    console.log("question: ", questionData);
-    console.log("estimatedGas: ", estimatedGas);
-    const tx = await masterAnonqa.postQuestion(
-      questionData.questionTitle,
-      questionData.question,
-      questionData.endTime,
-      {gasLimit: estimatedGas}
+    const tx = await masterdX.addPost(
+      postData.postTitle,
+      postData.postBody,
+      {
+        gasLimit: estimatedGas,
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined
+      }
     );
     await tx.wait();
 
   } catch (error) {
-    console.error("Error in addQuestion:", error);
+    console.error("Error in addPost:", error);
     throw error;
   }
 };
 
 // Answer service functions
-export const getAnswersForQuestion = async (questionId: string): Promise<Answer[]> => {
+export const getCommentsForPost = async (postId: string): Promise<Comment[]> => {
   try {
-    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
-    const answerInfos = await masterAnonqa.getAnswerInfo(questionId);
+    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
+    const commentInfos = await masterdX.getAnswerInfo(postId);
     
-    return answerInfos.map(a => ({
-      questionId: a.questionId,
-      answerId: a.answerId,
-      answer: a.answer,
+    return commentInfos.map(a => ({
+      postId: a.postId,
+      comment: a.comment,
       owner: a.owner,
     }));
   } catch (error) {
-    console.error("Error in getAnswersForQuestion:", error);
+    console.error("Error in getCommentsForPost:", error);
     return [];
   }
 };
 
-export const getUserAnswers = async (owner: string): Promise<Answer[]> => {
+export const getUserComments = async (owner: string): Promise<Comment[]> => {
   try {
-    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
-    const numOfQuestion = await masterAnonqa.totalQuestions();
-    console.log(numOfQuestion);
+    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
+    const numOfPost = await masterdX.totalPosts();
+    console.log(numOfPost);
 
-    let userAnswers: any = [];
-    for (let i=0; i<numOfQuestion; i++) {
-      const questionId = await masterAnonqa.questionIds(i);
-      const answerInfos = await masterAnonqa.getAnswerInfo(questionId);
+    let userComments: any = [];
+    for (let i=0; i<numOfPost; i++) {
+      const postId = await masterdX.postIds(i);
+      const commentInfos = await masterdX.getCommentsInfo(postId);
 
-      for (let j=0; j<answerInfos.length; j++) {
-        const answerInfo = await masterAnonqa.answerData(questionId, j);
-        if (answerInfo.owner.toLowerCase() == owner.toLowerCase()) {
-          userAnswers.push(answerInfo);
+      for (let j=0; j<commentInfos.length; j++) {
+        const commentInfo = await masterdX.commentData(postId, j);
+        if (commentInfo.owner.toLowerCase() == owner.toLowerCase()) {
+          userComments.push(commentInfo);
         }
       }
     }
     
-    return userAnswers.map(a => ({
-      questionId: a.questionId,
-      answerId: a.answerId,
-      answer: a.answer,
+    return userComments.map(a => ({
+      postId: a.postId,
+      comment: a.comment,
       owner: a.owner,
     }));
   } catch (error) {
-    console.error("Error in getUserAnswers:", error);
+    console.error("Error in getUserComments:", error);
     return [];
   }
 };
 
-export const getProposals = async (): Promise<Question[]> => {
+export const getProposals = async (): Promise<Post[]> => {
   try {
-    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
-    const numOfQuestion = await masterAnonqa.totalQuestions();
-    console.log(numOfQuestion);
+    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
+    const numOfPost = await masterdX.totalPosts();
+    console.log(numOfPost);
 
-    let questionInfos: any = [];
-    for (let i=0; i<numOfQuestion; i++) {
-      const questionId = await masterAnonqa.questionIds(i);
-      const questionInfo = await masterAnonqa.getQuestionInfo(questionId);
-      if (questionInfo.owner.toLowerCase() == admin.toLowerCase()) {
-        questionInfos.push(questionInfo);
+    let postInfos: any = [];
+    for (let i=0; i<numOfPost; i++) {
+      const postId = await masterdX.postIds(i);
+      const postInfo = await masterdX.getPostInfo(postId);
+      if (postInfo.owner.toLowerCase() == admin.toLowerCase()) {
+        postInfos.push(postInfo);
       }
     }
     
-    return questionInfos.map(q => ({
-      questionId: q.questionId,
+    return postInfos.map(q => ({
+      postId: q.postId,
       owner: q.owner,
-      questionTitle: q.questionTitle,
-      question: q.question,
+      postTitle: q.postTitle,
+      postBody: q.postBody,
       endTime: q.endTime,
-      sentToHeaven: q.sentToHeaven,
+      archived: q.archived,
     }));
   } catch (error) {
-    console.error("Error in getUserQuestions:", error);
+    console.error("Error in getUserPosts:", error);
     return [];
   }
 }
 
-export const addAnswer = async (answerData: { questionId: string, answer: string }) => {
+export const addComment = async (commentData: { postId: string, comment: string }) => {
   try {
-    const masterAnonqa = await getContract(masterAnonqaAddress, masterAnonqaABI);
+    const masterdX = await getContract(masterdXAddress, masterdXABI);
     
-    const gasLimit = await masterAnonqa.postAnswer.estimateGas(
-      answerData.questionId,
-      answerData.answer
+    const gasLimit = await masterdX.addComment.estimateGas(
+      commentData.postId,
+      commentData.comment
     );
     const estimatedGas = gasLimit * BigInt(15) / BigInt(10);
-    const tx = await masterAnonqa.postAnswer(
-      answerData.questionId,
-      answerData.answer,
-      {gasLimit: estimatedGas}
+    const tx = await masterdX.addComment(
+      commentData.postId,
+      commentData.comment,
+      {
+        gasLimit: estimatedGas,
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined
+      }
     );
     await tx.wait();
     
   } catch (error) {
-    console.error("Error in addAnswer:", error);
+    console.error("Error in addComment:", error);
     throw error;
   }
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Question } from "@/types";
-import { addAnswer } from "@/services/AnonqaService";
+import { Post } from "@/types";
+import { addComment } from "@/services/AnonqaService";
 import { formatDistanceToNow } from "date-fns";
 import { Eye, ChevronDown, MessageSquare, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,13 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import { RichTextArea } from "./RichTextArea";
 import { RichTextRenderer } from "./RichTextRenderer";
 
-interface QuestionCardProps {
-  question: Question;
+interface PostCardProps {
+  post: Post;
 }
 
-export const PostCard = ({ question }: QuestionCardProps) => {
+export const PostCard = ({ post }: PostCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [answer, setAnswer] = useState("");
+  const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAnswerOverlay, setShowAnswerOverlay] = useState(false);
   const { address, isConnected } = useAppKitAccount();
@@ -37,30 +37,30 @@ export const PostCard = ({ question }: QuestionCardProps) => {
   }, [showAnswerOverlay]);
 
   const handleAnswerSubmit = async () => {
-    if (!answer.trim()) {
-      toast.error("Please enter an answer");
+    if (!comment.trim()) {
+      toast.error("Please enter an comment");
       return;
     }
     
     if (!isConnected) {
-      toast.error("Please connect your wallet to post an answer");
+      toast.error("Please connect your wallet to post an comment");
       return;
     }
 
     setIsSubmitting(true);
     
     try {
-      await addAnswer({ 
-        questionId: question.questionId, 
-        answer: answer.trim() 
+      await addComment({ 
+        postId: post.postId, 
+        comment: comment.trim() 
       });
       
-      setAnswer("");
+      setComment("");
       setShowAnswerOverlay(false);
       toast.success("Answer posted successfully!");
     } catch (error) {
-      console.error("Error posting answer:", error);
-      toast.error("Failed to post answer. Please try again.");
+      console.error("Error posting comment:", error);
+      toast.error("Failed to post comment. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -72,7 +72,7 @@ export const PostCard = ({ question }: QuestionCardProps) => {
 
   const handleCloseAnswerOverlay = () => {
     setShowAnswerOverlay(false);
-    setAnswer("");
+    setComment("");
   };
 
   const renderAnswerOverlay = () => (
@@ -94,36 +94,36 @@ export const PostCard = ({ question }: QuestionCardProps) => {
             <CardHeader className="pb-2">
               <div className="flex flex-col gap-2">
                 <CardTitle className="text-xl md:text-2xl group-hover:text-primary transition-colors break-words">
-                  {question.questionTitle}
+                  {post.postTitle}
                 </CardTitle>
                 <div className="text-sm text-muted-foreground flex items-center gap-1.5">
                   <Clock className="h-4 w-4" />
                   <span>
-                  {new Date(Number(question.endTime) * 1000) > new Date() ? 'Archive' : 'Archived'}{' '}
-                  {formatDistanceToNow(new Date(Number(question.endTime) * 1000), { addSuffix: true })}
+                  {new Date(Number(post.endTime) * 1000) > new Date() ? 'Archive' : 'Archived'}{' '}
+                  {formatDistanceToNow(new Date(Number(post.endTime) * 1000), { addSuffix: true })}
                   </span>
                 </div>
               </div>
             </CardHeader>
 
             <CardContent className="pt-4 pb-6 px-3 md:px-6 break-words">
-              <RichTextRenderer content={question.question} />
+              <RichTextRenderer content={post.postBody} />
             </CardContent>
           </Card>
         </div>
 
         <CardContent className="px-3 md:px-6">
           <RichTextArea
-            placeholder="Write your answer here..."
+            placeholder="Write your comment here..."
             className="min-h-[200px]"
-            value={answer}
-            onChange={setAnswer}
+            value={comment}
+            onChange={setComment}
             disabled={isSubmitting || !isConnected}
           />
         </CardContent>
 
         <CardFooter className="flex justify-end gap-2">
-          <Link to={`/app/question/${question.questionId}`} className="flex-1">
+          <Link to={`/app/question/${post.postId}`} className="flex-1">
             <Button 
               variant="outline" 
               className="flex items-center gap-2 w-full justify-center"
@@ -156,12 +156,12 @@ export const PostCard = ({ question }: QuestionCardProps) => {
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <CardTitle className="text-xl md:text-2xl group-hover:text-primary transition-colors break-words">
-                      {question.questionTitle}
+                      {post.postTitle}
                     </CardTitle>
                     <div className="mt-2 text-sm text-muted-foreground">
                     <span>
-                      {new Date(Number(question.endTime) * 1000) > new Date() ? 'Archive' : 'Archived'}{' '}
-                      {formatDistanceToNow(new Date(Number(question.endTime) * 1000), { addSuffix: true })}
+                      {new Date(Number(post.endTime) * 1000) > new Date() ? 'Archive' : 'Archived'}{' '}
+                      {formatDistanceToNow(new Date(Number(post.endTime) * 1000), { addSuffix: true })}
                     </span>
                     </div>
                   </div>
@@ -178,11 +178,11 @@ export const PostCard = ({ question }: QuestionCardProps) => {
           
           <CollapsibleContent>
             <CardContent className="pt-4 pb-6 px-3 md:px-6 break-words">
-              <RichTextRenderer content={question.question} />
+              <RichTextRenderer content={post.postBody} />
             </CardContent>
             
             <CardFooter className="flex justify-end gap-2 pt-0 pb-6 px-3 md:px-6">
-              <Link to={`/app/question/${question.questionId}`} className="flex-1">
+              <Link to={`/app/question/${post.postId}`} className="flex-1">
                 <Button 
                   variant="outline" 
                   className="flex items-center gap-2 w-full justify-center"
@@ -191,7 +191,7 @@ export const PostCard = ({ question }: QuestionCardProps) => {
                   See Answers
                 </Button>
               </Link>
-              {!question.sentToHeaven && (
+              {!post.archived && (
                 <Button 
                   variant="default"
                   className="flex items-center gap-2 flex-1 justify-center"
