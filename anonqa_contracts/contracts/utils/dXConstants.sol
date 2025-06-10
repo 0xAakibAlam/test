@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.21;
 
-library AnonqaConstants {
+library dXConstants {
     bytes32 public constant BOT = keccak256("BOT");
 
     bytes32 public constant DEFAULT_ADMIN_ROLE = 0x0;

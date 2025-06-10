@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.21;
 
-interface IAnonqaConfig {
+interface IdXConfig {
     error InvalidKey();
     error NotAdmin();
     error NotBot();

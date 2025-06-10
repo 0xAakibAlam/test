@@ -4,18 +4,18 @@ pragma solidity ^0.8.21;
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-import { AnonqaConstants } from "./utils/AnonqaConstants.sol";
-import { IAnonqaConfig } from "./interfaces/IAnonqaConfig.sol";
+import { dXConstants } from "./utils/dXConstants.sol";
+import { IdXConfig } from "./interfaces/IdXConfig.sol";
 import { UtilLib } from "./utils/UtilLib.sol";
 
-contract AnonqaConfig is Initializable, AccessControlUpgradeable, IAnonqaConfig {
+contract dXConfig is Initializable, AccessControlUpgradeable, IdXConfig {
     mapping(bytes32 => address) public addressMap;
 
     constructor() {
         _disableInitializers();
     }
 
-    function __AnonqaConfig_Init(address _admin) public initializer {
+    function __dXConfig_Init(address _admin) public initializer {
         UtilLib.checkNonZeroAddress(_admin);
 
         __AccessControl_init();
