@@ -1,5 +1,5 @@
 import { Question, Answer } from "@/types";
-import { masterAnonqaAddress, masterAnonqaABI } from "@/contracts/MasterAnonqa";
+import { masterAnonqaAddress, masterAnonqaABI, admin } from "@/contracts/MasterAnonqa";
 import { ethers } from "ethers";
 import { MulticallWrapper } from "ethers-multicall-provider";
 
@@ -215,6 +215,35 @@ export const getUserAnswers = async (owner: string): Promise<Answer[]> => {
     return [];
   }
 };
+
+export const getProposals = async (): Promise<Question[]> => {
+  try {
+    const masterAnonqa = await getReadOnlyContract(masterAnonqaAddress, masterAnonqaABI);
+    const numOfQuestion = await masterAnonqa.totalQuestions();
+    console.log(numOfQuestion);
+
+    let questionInfos: any = [];
+    for (let i=0; i<numOfQuestion; i++) {
+      const questionId = await masterAnonqa.questionIds(i);
+      const questionInfo = await masterAnonqa.getQuestionInfo(questionId);
+      if (questionInfo.owner.toLowerCase() == admin.toLowerCase()) {
+        questionInfos.push(questionInfo);
+      }
+    }
+    
+    return questionInfos.map(q => ({
+      questionId: q.questionId,
+      owner: q.owner,
+      questionTitle: q.questionTitle,
+      question: q.question,
+      endTime: q.endTime,
+      sentToHeaven: q.sentToHeaven,
+    }));
+  } catch (error) {
+    console.error("Error in getUserQuestions:", error);
+    return [];
+  }
+}
 
 export const addAnswer = async (answerData: { questionId: string, answer: string }) => {
   try {

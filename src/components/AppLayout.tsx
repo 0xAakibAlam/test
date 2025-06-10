@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { ThemeProvider } from "@/context/ThemeContext";
-import Footer from "./Footer";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -13,7 +12,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <main className="flex-1 w-full max-w-[100vw] overflow-x-hidden">
             {children}
           </main>
-          <Footer />
         </div>
     </ThemeProvider>
   );

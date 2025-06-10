@@ -1,4 +1,5 @@
 export const masterAnonqaAddress = "0x6578C29E33c9e9f4882585Fd6a485c1ff83E8F37";
+export const admin = "";
 
 export const masterAnonqaABI = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },

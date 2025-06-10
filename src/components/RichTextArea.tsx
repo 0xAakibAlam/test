@@ -439,7 +439,7 @@ export const RichTextArea = ({
                                     className="flex items-center gap-0.2"
                                 >
                                     <AlignLeft />
-                                    <span className="bg-gray-100 dark:bg-gray-800 rounded-md p-0.5">
+                                    <span className="bg-gray-100 dark:bg-gray-800">
                                         <ChevronDown />
                                     </span>
                                 </Button>

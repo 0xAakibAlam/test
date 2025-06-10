@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { getArchivedQuestions } from "@/services/AnonqaService";
+import { getArchivedQuestions, getProposals } from "@/services/AnonqaService";
 import { Question } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown, Archive } from "lucide-react";
 
-export const ArchivePage = () => {
+export const ProposalsPage = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,7 +20,7 @@ export const ArchivePage = () => {
     const fetchArchivedQuestions = async () => {
       setIsLoading(true);
       try {
-        const data = await getArchivedQuestions();
+        const data = await getProposals();
         setQuestions(data);
       } catch (error) {
         console.error("Error fetching archived questions:", error);
@@ -104,7 +104,7 @@ export const ArchivePage = () => {
           <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-3 mb-2 animate-in fade-in-50 zoom-in-50 duration-700">
               <Archive className="h-8 w-8 animate-[float_3s_ease-in-out_infinite]" />
-              <h2 className="text-2xl font-semibold">No Posts Archived Yet</h2>
+              <h2 className="text-2xl font-semibold">No Proposals Yet</h2>
             </div>
           </div>
         )}

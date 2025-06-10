@@ -92,7 +92,7 @@ export const PostCard = ({ question }: QuestionCardProps) => {
         <div className="px-3 md:px-6">
           <Card className="mb-6 border-l-4 border-l-primary/20">
             <CardHeader className="pb-2">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="flex flex-col gap-2">
                 <CardTitle className="text-xl md:text-2xl group-hover:text-primary transition-colors break-words">
                   {question.questionTitle}
                 </CardTitle>

@@ -8,7 +8,8 @@ import HomePage from "@/pages/HomePage";
 import { PostInfoPage } from "@/pages/PostInfoPage";
 import { MyPostsPage } from "@/pages/MyPostsPage";
 import { MyCommentsPage } from "@/pages/MyCommentsPage";
-import ArchivePage from "@/pages/ArchivePage";
+import { ProposalsPage } from "@/pages/Proposals";
+import { ArchivePage } from "@/pages/ArchivePage";
 import NotFound from "@/pages/NotFound";
 
 import { createAppKit } from "@reown/appkit/react";
@@ -63,6 +64,7 @@ const App = () => (
           <Route path="/app/question/:id" element={<PostInfoPage />} />
           <Route path="/app/my-questions" element={<MyPostsPage />} />
           <Route path="/app/my-answers" element={<MyCommentsPage />} />
+          <Route path="/app/proposals" element={<ProposalsPage />} />
           <Route path="/app/archives" element={<ArchivePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
