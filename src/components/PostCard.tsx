@@ -181,11 +181,11 @@ export const PostCard = ({ post }: PostCardProps) => {
               <RichTextRenderer content={post.postBody} />
             </CardContent>
             
-            <CardFooter className="flex justify-end gap-2 pt-0 pb-6 px-3 md:px-6">
-              <Link to={`/app/post/${post.postId}`} className="flex-1">
+            <CardFooter className="flex flex-row justify-end gap-2 md:gap-5 pt-0 pb-6 px-3 md:px-6">
+              <Link to={`/app/post/${post.postId}`} className="w-1/2">
                 <Button 
                   variant="outline" 
-                  className="flex items-center gap-2 w-full justify-center"
+                  className="flex items-center gap-2 w-full justify-center text-sm"
                 >
                   <Eye className="h-4 w-4" />
                   See Comments
@@ -194,7 +194,7 @@ export const PostCard = ({ post }: PostCardProps) => {
               {!post.archived && (
                 <Button 
                   variant="default"
-                  className="flex items-center gap-2 flex-1 justify-center"
+                  className="flex items-center gap-2 w-1/2 justify-center text-sm"
                   disabled={!isConnected}
                   onClick={handleOpenCommentOverlay}
                 >
