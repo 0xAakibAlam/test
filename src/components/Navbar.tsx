@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { CustomConnectButton } from './ConnectButton';
 import { useTheme } from "@/context/ThemeContext";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, ArchiveIcon, MessageSquare, Menu, HomeIcon, MessageCircle, ClipboardList, Share2, Globe, Globe2, GlobeLock } from "lucide-react";
+import { Moon, Sun, ArchiveIcon, MessageSquare, Menu, HomeIcon, MessageCircle, Megaphone } from "lucide-react";
 import { FaXTwitter, FaLinkedinIn, FaGithub, FaTelegram, FaGlobe } from 'react-icons/fa6';
 import { SiGitbook } from 'react-icons/si';
 import {
@@ -64,8 +64,8 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             <Link to="/" className="text-xl font-bold flex items-center gap-2">
               <img 
-                src="/AnonQA.png" 
-                alt="AnonQA" 
+                src={theme === "light" ? "/exDark.png" : "/exLight.png"} 
+                alt="ex" 
                 className="h-10 w-10 object-contain" 
               /> 
             </Link>
@@ -85,22 +85,22 @@ const Navbar = () => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/app/my-questions" className="cursor-pointer w-full">
+                  <Link to="/app/my-posts" className="cursor-pointer w-full">
                     <MessageSquare className="mr-2 h-4 w-4" />
                     My Posts
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/app/my-answers" className="cursor-pointer w-full">
+                  <Link to="/app/my-comments" className="cursor-pointer w-full">
                     <MessageCircle className="mr-2 h-4 w-4" />
                     My Comments
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/app/proposals" className="cursor-pointer w-full">
-                    <ClipboardList className="mr-2 h-4 w-4" />
-                    Proposals
+                  <Link to="/app/announcements" className="cursor-pointer w-full">
+                    <Megaphone className="mr-2 h-4 w-4" />
+                    Announcements
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -168,9 +168,9 @@ const Navbar = () => {
                   </Link>
                 </NavigationMenuItem>
                   <NavigationMenuItem>
-                    <Link to="/app/my-questions">
+                    <Link to="/app/my-posts">
                       <NavigationMenuLink className={navigationMenuTriggerStyle()} style={{
-                        backgroundColor: location.pathname === "/app/my-questions" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
+                        backgroundColor: location.pathname === "/app/my-posts" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
                         color: theme === "light" ? "#1A1A1A" : "#E0E0E0",
                         borderRadius: "6px",
                         padding: "6px 12px",
@@ -183,9 +183,9 @@ const Navbar = () => {
                     </Link>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
-                    <Link to="/app/my-answers">
+                    <Link to="/app/my-comments">
                       <NavigationMenuLink className={navigationMenuTriggerStyle()} style={{
-                        backgroundColor: location.pathname === "/app/my-answers" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
+                        backgroundColor: location.pathname === "/app/my-comments" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
                         color: theme === "light" ? "#1A1A1A" : "#E0E0E0",
                         borderRadius: "6px",
                         padding: "6px 12px",
@@ -198,17 +198,17 @@ const Navbar = () => {
                     </Link>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
-                  <Link to="/app/proposals">
+                  <Link to="/app/announcements">
                       <NavigationMenuLink className={navigationMenuTriggerStyle()} style={{
-                        backgroundColor: location.pathname === "/app/proposals" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
+                        backgroundColor: location.pathname === "/app/announcements" ? (theme === "light" ? "#E0E0E0" : "#3A3A3A") : "",
                         color: theme === "light" ? "#1A1A1A" : "#E0E0E0",
                         borderRadius: "6px",
                         padding: "6px 12px",
                         height: "auto",
                         transition: "all 0.3s ease",
                       }}>
-                        <ClipboardList className="mr-2 h-6 w-6" />
-                        Proposals
+                        <Megaphone className="mr-2 h-6 w-6" />
+                        Announcements
                       </NavigationMenuLink>
                     </Link>
                   </NavigationMenuItem>

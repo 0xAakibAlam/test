@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { addComment } from "@/services/AnonqaService";
+import { addComment } from "@/services/dXService";
 import { Button } from "@/components/ui/button";
 import { RichTextArea } from "./RichTextArea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,12 +22,12 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
     e.preventDefault();
     
     if (!comment.trim()) {
-      toast.error("Please enter an answer");
+      toast.error("Please enter an comment");
       return;
     }
     
     if (!isConnected) {
-      toast.error("Please connect your wallet to post an answer");
+      toast.error("Please connect your wallet to post an comment");
       return;
     }
     
@@ -40,14 +40,14 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
       });
       
       setComment("");
-      toast.success("Answer posted successfully!");
+      toast.success("Comment posted successfully!");
       
       if (onCommentAdded) {
         onCommentAdded();
       }
     } catch (error) {
-      console.error("Error posting answer:", error);
-      toast.error("Failed to post answer. Please try again.");
+      console.error("Error posting comment:", error);
+      toast.error("Failed to post comment. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -74,7 +74,7 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
               disabled={isSubmitting || !isConnected}
             >
               <MessageSquare className="h-4 w-4" />
-              {isSubmitting ? "Posting..." : "Post Answer"}
+              {isSubmitting ? "Posting..." : "Comment"}
             </Button>
           </div>
         </form>

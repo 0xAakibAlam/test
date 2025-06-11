@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { CommentForm } from "@/components/CommentForm";
-import { getPostById, getCommentsForPost } from "@/services/AnonqaService";
+import { getPostById, getCommentsForPost } from "@/services/dXService";
 import { Post, Comment } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
@@ -36,7 +36,7 @@ export const PostInfoPage = () => {
       setComments(commentData || []);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Failed to load question and answers");
+      toast.error("Failed to load post and comments");
     } finally {
       setIsLoading(false);
     }
@@ -49,12 +49,10 @@ export const PostInfoPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-        <div className="mb-6">
-        </div>
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-6 max-w-7xl">
 
         {isLoading ? (
-          <div className="flex justify-center items-center py-10">
+          <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse">
@@ -96,7 +94,7 @@ export const PostInfoPage = () => {
             <CommentForm postId={id as string} onCommentAdded={fetchData} />
 
             <h2 className="text-xl font-bold mb-4 mt-8">
-              Answers
+              Comments
             </h2>
 
             {comments.length > 0 ? (
@@ -105,13 +103,13 @@ export const PostInfoPage = () => {
               ))
             ) : (
               <div className="text-center py-10 bg-muted/20 rounded-lg">
-                <p className="text-muted-foreground">No answers yet. Be the first to answer!</p>
+                <p className="text-muted-foreground">No comments yet. Be the first to comment!</p>
               </div>
             )}
           </div>
         ) : (
           <div className="text-center py-10">
-            <p className="text-muted-foreground">Question not found</p>
+            <p className="text-muted-foreground">Post not found</p>
           </div>
         )}
       </main>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { PostForm } from "@/components/PostForm";
 import { PostCard } from "@/components/PostCard";
-import { getActivePosts } from "@/services/AnonqaService";
+import { getActivePosts } from "@/services/dXService";
 import { Post } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Input } from "@/components/ui/input";
@@ -15,31 +15,31 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  const fetchQuestions = async () => {
+  const fetchPosts = async () => {
     setIsLoading(true);
     try {
       const data = await getActivePosts();
       setPosts(data);
     } catch (error) {
-      console.error("Error fetching questions:", error);
-      toast.error("Failed to load questions");
+      console.error("Error fetching posts:", error);
+      toast.error("Failed to load posts");
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchQuestions();
+    fetchPosts();
   }, []);
 
-  // Filter questions based on search term
-  const filteredQuestions = posts.filter(post => 
+  // Filter posts based on search term
+  const filteredPosts = posts.filter(post => 
     post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
     post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Sort questions based on expiration time
-  const sortedAndFilteredQuestions = filteredQuestions.sort((a, b) => {
+  // Sort posts based on expiration time
+  const sortedAndFilteredPosts = filteredPosts.sort((a, b) => {
     const timeA = parseInt(a.endTime);
     const timeB = parseInt(b.endTime);
     return sortDirection === 'asc' ? timeA - timeB : timeB - timeA;
@@ -52,8 +52,8 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-        <PostForm onPostAdded={fetchQuestions} />
+      <main className="container mx-auto px-4 sm:px-6 py-2 lg:px-8 md:py-6 max-w-7xl">
+        <PostForm onPostAdded={fetchPosts} />
 
         <h2 className="text-xl sm:text-2xl font-bold mb-4">Posts</h2>
 
@@ -62,7 +62,7 @@ const HomePage = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search questions..."
+              placeholder="Search posts..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 w-full"
@@ -79,7 +79,7 @@ const HomePage = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center items-center py-5">
+          <div className="flex justify-center items-center py-2 md:py-4">
           <div className="w-full space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse">
@@ -97,17 +97,17 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-        ) : sortedAndFilteredQuestions.length > 0 ? (
-          sortedAndFilteredQuestions.map((post) => (
+        ) : sortedAndFilteredPosts.length > 0 ? (
+          sortedAndFilteredPosts.map((post) => (
             <PostCard key={post.postId} post={post} />
           ))
         ) : searchTerm ? (
           <div className="text-center py-10">
-            <p className="text-muted-foreground mb-4">No questions match your search</p>
+            <p className="text-muted-foreground mb-4">No posts match your search</p>
           </div>
         ) : (
           <div className="text-center py-10">
-            <p className="text-muted-foreground mb-4">No questions found</p>
+            <p className="text-muted-foreground mb-4">No posts found</p>
           </div>
         )}
       </main>

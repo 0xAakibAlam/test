@@ -11,7 +11,6 @@ const Landing = () => {
     <div className="bg-gradient-to-b from-background via-background/95 to-background/90 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/20 rounded-full blur-3xl" />
       </div>
 
@@ -28,29 +27,29 @@ const Landing = () => {
         </Button>
       </div>
 
-      <div className="container mx-auto px-4 py-16 relative z-10">
+      <div className="container mx-auto px-4 py-24 relative z-10">
         <div className="max-w-5xl mx-auto text-center animate-fade-in">
           {/* Hero Section */}
           <div className="flex flex-col items-center mb-8">
-            <div className="flex items-center gap-10 mb-8">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-10 mb-4 sm:mb-6 md:mb-8 w-[90%] sm:w-[85%] md:w-[80%] lg:w-auto">
               <div className="relative group">
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl group-hover:scale-110 transition-transform duration-300" />
-                <div className="relative aspect-square w-24 sm:w-32 md:w-36 rounded-full bg-primary/10 border border-primary/20 group-hover:border-primary/40 transition-all duration-300">
+                <div className="absolute inset-0 bg-primary/20 rounded-lg blur-xl group-hover:scale-110 transition-transform duration-300" />
+                <div className="relative aspect-square w-28 sm:w-32 md:w-36 lg:w-40 rounded-lg bg-primary/10 transition-all duration-300">
                   <img 
-                    src="/AnonQA.png" 
-                    alt="AnonQA" 
+                    src={theme === "light" ? "/exDark.png" : "/exLight.png"} 
+                    alt="ex" 
                     className="h-full w-full object-contain" 
                   />
                 </div>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-                AnonQA
+              <h1 className="text-8xl md:text-9xl font-bold bg-clip-text">
+                dX
               </h1>
             </div>
             
             <p className="text-2xl mb-8 text-muted-foreground max-w-2xl">
-              The decentralized Q&A platform where your voice matters, powered by blockchain technology
+              A decentralized space where your thoughts are permanent, your identity is yours, and your voice is unstoppable.
             </p>
 
             <div className="flex gap-2 sm:gap-4 w-full sm:w-1/2 max-w-xs sm:max-w-none mx-auto">
@@ -79,7 +78,7 @@ const Landing = () => {
               <div className="bg-primary/10 p-3 sm:p-4 rounded-xl w-fit mb-3 sm:mb-4 mx-auto">
                 <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
               </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">True Anonymity</h3>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">Pseudonymity</h3>
               <p className="text-sm sm:text-base text-muted-foreground">Your identity stays protected with wallet-based authentication. No personal data, no tracking.</p>
             </div>
 
@@ -99,26 +98,6 @@ const Landing = () => {
               <p className="text-sm sm:text-base text-muted-foreground">Every interaction is secured on the blockchain, ensuring transparency and immutability.</p>
             </div>
           </div>
-
-          {/* Stats Section */}
-          {/* <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">10K+</div>
-              <div className="text-muted-foreground">Active Users</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">50K+</div>
-              <div className="text-muted-foreground">Questions Asked</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">100K+</div>
-              <div className="text-muted-foreground">Answers Shared</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">24/7</div>
-              <div className="text-muted-foreground">Active Community</div>
-            </div>
-          </div> */}
         </div>
       </div>
     </div>

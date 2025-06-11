@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import { getUserComments, getPostById } from "@/services/AnonqaService";
+import { getUserComments, getPostById } from "@/services/dXService";
 import { Comment } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
-import { MessageCircle, Wallet, ArrowRight } from "lucide-react";
+import { MessageCircle, Wallet, ArrowRight, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CommentCard } from "@/components/CommentCard";
 
@@ -19,7 +19,7 @@ export const MyCommentsPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserAnswers = async () => {
+    const fetchUserComments = async () => {
       if (!isConnected) {
         setIsLoading(false);
         return;
@@ -29,26 +29,26 @@ export const MyCommentsPage = () => {
       try {
         const commentsData = await getUserComments(address);
         
-        // Fetch the question text for each answer
-        const answersWithQuestionTitle = await Promise.all(
+        // Fetch the post text for each answer
+        const answersWithPostTitle = await Promise.all(
           commentsData.map(async (comment) => {
             try {
               const post = await getPostById(comment.postId);
               return {
                 ...comment,
-                postTitle: post?.postTitle || "Question not found"
+                postTitle: post?.postTitle || "Post not found"
               };
             } catch (error) {
-              console.error("Error fetching question:", error);
+              console.error("Error fetching post:", error);
               return {
                 ...comment,
-                postTitle: "Question not found"
+                postTitle: "Post not found"
               };
             }
           })
         );
         
-        setComments(answersWithQuestionTitle);
+        setComments(answersWithPostTitle);
       } catch (error) {
         console.error("Error fetching user comments:", error);
         toast.error("Failed to load my comments");
@@ -57,13 +57,20 @@ export const MyCommentsPage = () => {
       }
     };
 
-    fetchUserAnswers();
+    fetchUserComments();
   }, [address, isConnected]);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-6 max-w-7xl">
+        <div className="mb-6">
+          <div className="flex items-center gap-3">
+            <MessageSquare className="h-8 w-8" />
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">My Comments</h1>
+          </div>
+          <p className="text-muted-foreground mt-2">View and manage all your comments</p>
+        </div>
 
         {!isConnected ? (
           <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
@@ -76,7 +83,7 @@ export const MyCommentsPage = () => {
           </p>
         </div>
         ) : isLoading ? (
-          <div className="flex justify-center items-center py-10">
+          <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse">

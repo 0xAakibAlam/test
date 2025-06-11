@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useAppKitTheme } from "@reown/appkit/react";
 
@@ -21,17 +20,21 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     if (savedTheme) {
       setTheme(savedTheme);
       setThemeMode(savedTheme);
-      // setThemeVariables({
-      //   '--w3m-accent': savedTheme === "dark" ? '#8c8c8c' : '#000000',
-      // });
       document.documentElement.classList.toggle("dark", savedTheme === "dark");
+      // Update favicon
+      const favicon = document.getElementById("favicon") as HTMLLinkElement;
+      if (favicon) {
+        favicon.href = savedTheme === "light" ? "/exDark.png" : "/exLight.png";
+      }
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setTheme("dark");
       setThemeMode("dark");
-      // setThemeVariables({
-      //   '--w3m-accent': theme === "dark" ? '#8c8c8c' : '#000000',
-      // });
       document.documentElement.classList.add("dark");
+      // Update favicon for dark mode
+      const favicon = document.getElementById("favicon") as HTMLLinkElement;
+      if (favicon) {
+        favicon.href = "/exLight.png";
+      }
     }
   }, []);
 
@@ -41,10 +44,13 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     document.documentElement.classList.toggle("dark");
     localStorage.setItem("theme", newTheme);
 
+    // Update favicon
+    const favicon = document.getElementById("favicon") as HTMLLinkElement;
+    if (favicon) {
+      favicon.href = newTheme === "light" ? "/exDark.png" : "/exLight.png";
+    }
+
     setThemeMode(newTheme);
-    // setThemeVariables({
-    //   '--w3m-accent': newTheme === "dark" ? '#8c8c8c' : '#000000',
-    // });
   };
 
   return (

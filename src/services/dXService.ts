@@ -31,7 +31,7 @@ async function getContract(contractAddress: string, contractABI: any) {
   return contractInstance;
 }
 
-// Question service functions
+// Post service functions
 export const getActivePosts = async (): Promise<Post[]> => {
   try {
     const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
@@ -136,7 +136,7 @@ export const getArchivedPosts = async (): Promise<Post[]> => {
       archived: q.archived,
     }));
   } catch (error) {
-    console.error("Error in getArchivedQuestions:", error);
+    console.error("Error in getArchivedPosts:", error);
     return [];
   }
 };
@@ -168,11 +168,11 @@ export const addPost = async (postData: { postTitle: string, postBody: string })
   }
 };
 
-// Answer service functions
+// Comment service functions
 export const getCommentsForPost = async (postId: string): Promise<Comment[]> => {
   try {
     const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
-    const commentInfos = await masterdX.getAnswerInfo(postId);
+    const commentInfos = await masterdX.getCommentsInfo(postId);
     
     return commentInfos.map(a => ({
       postId: a.postId,
@@ -215,7 +215,7 @@ export const getUserComments = async (owner: string): Promise<Comment[]> => {
   }
 };
 
-export const getProposals = async (): Promise<Post[]> => {
+export const getAdminPosts = async (): Promise<Post[]> => {
   try {
     const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
     const numOfPost = await masterdX.totalPosts();

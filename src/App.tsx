@@ -8,7 +8,7 @@ import HomePage from "@/pages/HomePage";
 import { PostInfoPage } from "@/pages/PostInfoPage";
 import { MyPostsPage } from "@/pages/MyPostsPage";
 import { MyCommentsPage } from "@/pages/MyCommentsPage";
-import { ProposalsPage } from "@/pages/Proposals";
+import { AnnouncementPage } from "@/pages/AnnouncementPage";
 import { ArchivePage } from "@/pages/ArchivePage";
 import NotFound from "@/pages/NotFound";
 
@@ -24,7 +24,7 @@ const networks = [sepolia] as [typeof sepolia];
 
 // 3. Create a metadata object - optional
 const metadata = {
-  name: "Anonqa",
+  name: "dX",
   description: "Decentralized Q&A Platform",
   url: "https://anonqa0.netlify.app/", // origin must match your domain & subdomain
   icons: [],
@@ -61,10 +61,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/app" element={<HomePage />} />
-          <Route path="/app/question/:id" element={<PostInfoPage />} />
-          <Route path="/app/my-questions" element={<MyPostsPage />} />
-          <Route path="/app/my-answers" element={<MyCommentsPage />} />
-          <Route path="/app/proposals" element={<ProposalsPage />} />
+          <Route path="/app/post/:id" element={<PostInfoPage />} />
+          <Route path="/app/my-posts" element={<MyPostsPage />} />
+          <Route path="/app/my-comments" element={<MyCommentsPage />} />
+          <Route path="/app/announcements" element={<AnnouncementPage />} />
           <Route path="/app/archives" element={<ArchivePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

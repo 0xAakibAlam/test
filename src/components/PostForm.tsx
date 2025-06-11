@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { addPost } from "@/services/AnonqaService";
+import { addPost } from "@/services/dXService";
 import { Button } from "@/components/ui/button";
 import { RichTextArea } from "./RichTextArea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,7 +54,7 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
       setTitle("");
       setPostBody("");
       setResetKey(prev => prev + 1);
-      toast.success("Question posted successfully!");
+      toast.success("Post added successfully!");
       
       if (onPostAdded) {
         onPostAdded();
@@ -101,7 +101,7 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
               className="w-full sm:w-auto"
             >
               <MessageSquare className="h-4 w-4" />
-              {isSubmitting ? "Posting..." : "Post Question"}
+              {isSubmitting ? "Posting..." : "Post"}
             </Button>
           </div>
         </form>

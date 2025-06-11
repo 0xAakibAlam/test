@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { getUserPosts } from "@/services/AnonqaService";
+import { getUserPosts } from "@/services/dXService";
 import { Post } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
@@ -19,7 +19,7 @@ export const MyPostsPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUserQuestions = async () => {
+    const fetchUserPosts = async () => {
       if (!isConnected) {
         setIsLoading(false);
         return;
@@ -30,24 +30,24 @@ export const MyPostsPage = () => {
         const data = await getUserPosts(address);
         setPosts(data);
       } catch (error) {
-        console.error("Error fetching user questions:", error);
+        console.error("Error fetching user posts:", error);
         toast.error("Failed to load my posts");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchUserQuestions();
+    fetchUserPosts();
   }, [address, isConnected]);
 
-  // Filter questions based on search term
-  const filteredQuestions = posts.filter(post => 
+  // Filter posts based on search term
+  const filteredPosts = posts.filter(post => 
     post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
     post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Sort questions based on expiration time
-  const sortedAndFilteredQuestions = filteredQuestions.sort((a, b) => {
+  // Sort posts based on expiration time
+  const sortedAndFilteredPosts = filteredPosts.sort((a, b) => {
     const timeA = parseInt(a.endTime);
     const timeB = parseInt(b.endTime);
     return sortDirection === 'asc' ? timeA - timeB : timeB - timeA;
@@ -60,7 +60,11 @@ export const MyPostsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-6 max-w-7xl">
+        <div className="mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">My Posts</h1>
+          <p className="text-muted-foreground mt-2">View and manage all your posts in one place</p>
+        </div>
 
         {!isConnected ? (
           <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
@@ -73,7 +77,7 @@ export const MyPostsPage = () => {
             </p>
           </div>
         ) : isLoading ? (
-          <div className="flex justify-center items-center py-10">
+          <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse">
@@ -91,14 +95,14 @@ export const MyPostsPage = () => {
               ))}
             </div>
           </div>
-        ) : sortedAndFilteredQuestions.length > 0 ? (
+        ) : sortedAndFilteredPosts.length > 0 ? (
           <div>
             <div className="relative mb-6 flex items-center gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search questions..."
+                  placeholder="Search posts..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -113,7 +117,7 @@ export const MyPostsPage = () => {
                 <ArrowUpDown className="h-4 w-4" />
               </Button>
             </div>
-            {sortedAndFilteredQuestions.map((post) => (
+            {sortedAndFilteredPosts.map((post) => (
               <PostCard key={post.postId} post={post} />
             ))}
           </div>

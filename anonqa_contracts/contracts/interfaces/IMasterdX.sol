@@ -29,7 +29,7 @@ interface IMasterdX {
     event FuneralCompleted(bytes32 _postId);
     event PostAdded(bytes32 _postId, string _postTitle, string _postBody, address _owner, uint256 _endTime);
     event CommentAdded(bytes32 _postId, string _comment, address _owner);
-    event PostLifeTimeUpdated(uint256 _maxQuestionLifeTime);
+    event PostLifeTimeUpdated(uint256 _maxPostLifeTime);
     event MaxPostTitleLengthUpdated(uint256 _maxPostTitleLength);
     event FreeWindowOpenUpdated(bool _freeWindowOpen);
     event TokenRequiredPerPostUpdated(uint256 _tokenRequiredPerPost);

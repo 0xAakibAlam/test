@@ -1,46 +1,45 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { getProposals } from "@/services/AnonqaService";
+import { getAdminPosts } from "@/services/dXService";
 import { Post } from "@/types";
 import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown, Archive } from "lucide-react";
 
-export const ProposalsPage = () => {
+export const AnnouncementPage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
-    const fetchArchivedQuestions = async () => {
+    const fetchArchivedPosts = async () => {
       setIsLoading(true);
       try {
-        const data = await getProposals();
+        const data = await getAdminPosts();
         setPosts(data);
       } catch (error) {
-        console.error("Error fetching archived questions:", error);
-        toast.error("Failed to load archived questions");
+        console.error("Error fetching archived posts:", error);
+        toast.error("Failed to load archived posts");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchArchivedQuestions();
+    fetchArchivedPosts();
   }, []);
 
-  // Filter questions based on search term
-  const filteredQuestions = posts.filter(post => 
+  // Filter posts based on search term
+  const filteredPosts = posts.filter(post => 
     post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
     post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Sort questions based on expiration time
-  const sortedAndFilteredQuestions = filteredQuestions.sort((a, b) => {
+  // Sort posts based on expiration time
+  const sortedAndFilteredPosts = filteredPosts.sort((a, b) => {
     const timeA = parseInt(a.endTime);
     const timeB = parseInt(b.endTime);
     return sortDirection === 'asc' ? timeA - timeB : timeB - timeA;
@@ -53,10 +52,14 @@ export const ProposalsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-6 max-w-7xl">
+        <div className="mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Announcements</h1>
+          <p className="text-muted-foreground mt-2">View all Admin Posts</p>
+        </div>
         
         {isLoading ? (
-          <div className="flex justify-center items-center py-10">
+          <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="animate-pulse">
@@ -74,14 +77,14 @@ export const ProposalsPage = () => {
               ))}
             </div>
           </div>
-        ) : sortedAndFilteredQuestions.length > 0 ? (
+        ) : sortedAndFilteredPosts.length > 0 ? (
           <div>
             <div className="relative mb-6 flex items-center gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search questions..."
+                  placeholder="Search posts..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -96,7 +99,7 @@ export const ProposalsPage = () => {
                 <ArrowUpDown className="h-4 w-4" />
               </Button>
             </div>
-            {sortedAndFilteredQuestions.map((post) => (
+            {sortedAndFilteredPosts.map((post) => (
               <PostCard key={post.postId} post={post} />
             ))}
           </div>
@@ -104,7 +107,7 @@ export const ProposalsPage = () => {
           <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-3 mb-2 animate-in fade-in-50 zoom-in-50 duration-700">
               <Archive className="h-8 w-8 animate-[float_3s_ease-in-out_infinite]" />
-              <h2 className="text-2xl font-semibold">No Proposals Yet</h2>
+              <h2 className="text-2xl font-semibold">No Announcements Yet</h2>
             </div>
           </div>
         )}

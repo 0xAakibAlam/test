@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Post } from "@/types";
-import { addComment } from "@/services/AnonqaService";
+import { addComment } from "@/services/dXService";
 import { formatDistanceToNow } from "date-fns";
 import { Eye, ChevronDown, MessageSquare, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,11 +21,11 @@ export const PostCard = ({ post }: PostCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAnswerOverlay, setShowAnswerOverlay] = useState(false);
+  const [showCommentOverlay, setShowCommentOverlay] = useState(false);
   const { address, isConnected } = useAppKitAccount();
 
   useEffect(() => {
-    if (showAnswerOverlay) {
+    if (showCommentOverlay) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -34,9 +34,9 @@ export const PostCard = ({ post }: PostCardProps) => {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [showAnswerOverlay]);
+  }, [showCommentOverlay]);
 
-  const handleAnswerSubmit = async () => {
+  const handleCommentSubmit = async () => {
     if (!comment.trim()) {
       toast.error("Please enter an comment");
       return;
@@ -56,8 +56,8 @@ export const PostCard = ({ post }: PostCardProps) => {
       });
       
       setComment("");
-      setShowAnswerOverlay(false);
-      toast.success("Answer posted successfully!");
+      setShowCommentOverlay(false);
+      toast.success("Comment posted successfully!");
     } catch (error) {
       console.error("Error posting comment:", error);
       toast.error("Failed to post comment. Please try again.");
@@ -66,24 +66,24 @@ export const PostCard = ({ post }: PostCardProps) => {
     }
   };
 
-  const handleOpenAnswerOverlay = () => {
-    setShowAnswerOverlay(true);
+  const handleOpenCommentOverlay = () => {
+    setShowCommentOverlay(true);
   };
 
-  const handleCloseAnswerOverlay = () => {
-    setShowAnswerOverlay(false);
+  const handleCloseCommentOverlay = () => {
+    setShowCommentOverlay(false);
     setComment("");
   };
 
-  const renderAnswerOverlay = () => (
+  const renderCommentOverlay = () => (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 overflow-y-auto py-8">
       <Card className="w-full max-w-4xl mx-4 my-auto">
         <CardHeader className="flex flex-row items-center justify-between px-3 md:px-6">
-          <CardTitle>Post Your Answer</CardTitle>
+          <CardTitle>Post Your Comment</CardTitle>
           <Button
             variant="ghost"
             size="icon"
-            onClick={handleCloseAnswerOverlay}
+            onClick={handleCloseCommentOverlay}
           >
             <X className="h-4 w-4" />
           </Button>
@@ -123,23 +123,23 @@ export const PostCard = ({ post }: PostCardProps) => {
         </CardContent>
 
         <CardFooter className="flex justify-end gap-2">
-          <Link to={`/app/question/${post.postId}`} className="flex-1">
+          <Link to={`/app/post/${post.postId}`} className="flex-1">
             <Button 
               variant="outline" 
               className="flex items-center gap-2 w-full justify-center"
             >
               <Eye className="h-4 w-4" />
-              See Answers
+              See Comments
             </Button>
           </Link>
           <Button 
             variant="default" 
             className="flex items-center gap-2 flex-1 justify-center"
             disabled={isSubmitting || !isConnected}
-            onClick={handleAnswerSubmit}
+            onClick={handleCommentSubmit}
           >
             <MessageSquare className="h-4 w-4" />
-            {isSubmitting ? "Posting..." : "Post Answer"}
+            {isSubmitting ? "Posting..." : "Post Comment"}
           </Button>
         </CardFooter>
       </Card>
@@ -182,13 +182,13 @@ export const PostCard = ({ post }: PostCardProps) => {
             </CardContent>
             
             <CardFooter className="flex justify-end gap-2 pt-0 pb-6 px-3 md:px-6">
-              <Link to={`/app/question/${post.postId}`} className="flex-1">
+              <Link to={`/app/post/${post.postId}`} className="flex-1">
                 <Button 
                   variant="outline" 
                   className="flex items-center gap-2 w-full justify-center"
                 >
                   <Eye className="h-4 w-4" />
-                  See Answers
+                  See Comments
                 </Button>
               </Link>
               {!post.archived && (
@@ -196,10 +196,10 @@ export const PostCard = ({ post }: PostCardProps) => {
                   variant="default"
                   className="flex items-center gap-2 flex-1 justify-center"
                   disabled={!isConnected}
-                  onClick={handleOpenAnswerOverlay}
+                  onClick={handleOpenCommentOverlay}
                 >
                   <MessageSquare className="h-4 w-4" />
-                  Post Answer
+                  Post Comment
                 </Button>
               )}
             </CardFooter>
@@ -207,7 +207,7 @@ export const PostCard = ({ post }: PostCardProps) => {
         </Collapsible>
       </Card>
 
-      {showAnswerOverlay && renderAnswerOverlay()}
+      {showCommentOverlay && renderCommentOverlay()}
     </>
   );
 };
