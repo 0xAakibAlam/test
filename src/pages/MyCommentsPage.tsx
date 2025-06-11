@@ -29,8 +29,8 @@ export const MyCommentsPage = () => {
       try {
         const commentsData = await getUserComments(address);
         
-        // Fetch the post text for each answer
-        const answersWithPostTitle = await Promise.all(
+        // Fetch the post text for each comment
+        const commentsWithPostTitle = await Promise.all(
           commentsData.map(async (comment) => {
             try {
               const post = await getPostById(comment.postId);
@@ -48,7 +48,7 @@ export const MyCommentsPage = () => {
           })
         );
         
-        setComments(answersWithPostTitle);
+        setComments(commentsWithPostTitle);
       } catch (error) {
         console.error("Error fetching user comments:", error);
         toast.error("Failed to load my comments");
