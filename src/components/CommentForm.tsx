@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { useAddComment } from "@/services/dXService";
@@ -15,21 +14,46 @@ interface CommentFormProps {
 
 export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
   const [comment, setComment] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
-  const { addComment, isPending, isSuccess, isError } = useAddComment();
+  const [resetKey, setResetKey] = useState(0);
+  const { addComment, isPending, isSuccess, isError, isConfirming, isConfirmed, hash } = useAddComment();
+  const [hasShownSuccess, setHasShownSuccess] = useState(false);
+
+  // Reset success flag when starting a new transaction
+  useEffect(() => {
+    if (isPending) {
+      setHasShownSuccess(false);
+    }
+  }, [isPending]);
 
   // Handle success state
   useEffect(() => {
-    if (isSuccess) {
+    if (isConfirmed && !hasShownSuccess) {
       setComment("");
-      toast.success("Comment added successfully!");
+      setResetKey(prev => prev + 1);
+      toast.success("Comment added successfully!", {
+        description: (
+          <div className="flex items-center gap-2">
+            <span>Transaction:</span>
+            <a 
+              href={`https://sepolia.etherscan.io/tx/${hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600 underline"
+            >
+              {hash?.slice(0, 6)}...{hash?.slice(-4)}
+            </a>
+          </div>
+        ),
+        duration: 5000,
+      });
+      setHasShownSuccess(true);
       
       if (onCommentAdded) {
         onCommentAdded();
       }
     }
-  }, [isSuccess, onCommentAdded]);
+  }, [isConfirmed, onCommentAdded, hash, hasShownSuccess]);
 
   // Handle error state
   useEffect(() => {
@@ -47,11 +71,9 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
     }
 
     if (!comment.trim()) {
-      toast.error("Please enter an comment");
+      toast.error("Please enter a comment");
       return;
     }
-    
-    setIsSubmitting(true);
     
     try {
       await addComment({ 
@@ -62,6 +84,8 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
       console.error("Error posting comment:", error);
     }
   };
+
+  const isButtonDisabled = isPending || isConfirming || !isConnected;
   
   return (
     <Card className="mb-6">
@@ -75,16 +99,17 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
             value={comment}
             onChange={setComment}
             className="min-h-60 resize-none overflow-hidden mb-4"
-            disabled={isSubmitting || !isConnected}
+            disabled={isButtonDisabled}
+            key={resetKey}
           />
           <div className="flex justify-end">
             <Button 
               type="submit" 
               variant="default"
-              disabled={isSubmitting || !isConnected}
+              disabled={isButtonDisabled}
             >
               <MessageSquare className="h-4 w-4" />
-              {isSubmitting ? "Posting..." : "Comment"}
+              {isPending ? "Pending..." : isConfirming ? "Confirming..." : "Comment"}
             </Button>
           </div>
         </form>

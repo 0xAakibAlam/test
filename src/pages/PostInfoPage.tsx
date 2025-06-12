@@ -24,7 +24,7 @@ export const PostInfoPage = () => {
     args: [id as `0x${string}`],
   });
 
-  const { data: commentsInfo, isLoading: isCommentsLoading } = useReadContract({
+  const { data: commentsInfo, isLoading: isCommentsLoading, refetch: refetchComments } = useReadContract({
     address: maxterdXConfig.address as `0x${string}`,
     abi: maxterdXConfig.abi,
     functionName: "getCommentsInfo",
@@ -105,7 +105,7 @@ export const PostInfoPage = () => {
             </Card>
 
             <CommentForm postId={id as string} onCommentAdded={() => {
-              setComments([...comments]);
+              refetchComments();
             }} />
 
             <h2 className="text-xl font-bold mb-4 mt-8">

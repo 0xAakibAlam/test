@@ -20,10 +20,18 @@ interface PostCardProps {
 export const PostCard = ({ post }: PostCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [comment, setComment] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCommentOverlay, setShowCommentOverlay] = useState(false);
   const { address, isConnected } = useAppKitAccount();
-  const { addComment, isPending, isSuccess, isError } = useAddComment();
+  const { addComment, isPending, isSuccess, isError, isConfirming, isConfirmed, hash } = useAddComment();
+  const [hasShownSuccess, setHasShownSuccess] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  // Reset success flag when starting a new transaction
+  useEffect(() => {
+    if (isPending) {
+      setHasShownSuccess(false);
+    }
+  }, [isPending]);
 
   useEffect(() => {
     if (showCommentOverlay) {
@@ -39,11 +47,29 @@ export const PostCard = ({ post }: PostCardProps) => {
 
   // Handle success state
   useEffect(() => {
-    if (isSuccess) {
+    if (isConfirmed && !hasShownSuccess) {
       setComment("");
-      toast.success("Comment added successfully!");
+      setResetKey(prev => prev + 1);
+      toast.success("Comment added successfully!", {
+        description: (
+          <div className="flex items-center gap-2">
+            <span>Transaction:</span>
+            <a 
+              href={`https://sepolia.etherscan.io/tx/${hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600 underline"
+            >
+              {hash?.slice(0, 6)}...{hash?.slice(-4)}
+            </a>
+          </div>
+        ),
+        duration: 5000,
+      });
+      setHasShownSuccess(true);
+      handleCloseCommentOverlay();
     }
-  }, [isSuccess]);
+  }, [isConfirmed, hash, hasShownSuccess]);
 
   // Handle error state
   useEffect(() => {
@@ -54,16 +80,14 @@ export const PostCard = ({ post }: PostCardProps) => {
 
   const handleCommentSubmit = async () => {
     if (!isConnected) {
-      toast.error("Please connect your wallet to post an comment");
+      toast.error("Please connect your wallet to post a comment");
       return;
     }
 
     if (!comment.trim()) {
-      toast.error("Please enter an comment");
+      toast.error("Please enter a comment");
       return;
     }
-
-    setIsSubmitting(true);
     
     try {
       await addComment({ 
@@ -83,6 +107,8 @@ export const PostCard = ({ post }: PostCardProps) => {
     setShowCommentOverlay(false);
     setComment("");
   };
+
+  const isButtonDisabled = isPending || isConfirming || !isConnected;
 
   const renderCommentOverlay = () => (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 overflow-y-auto py-8">
@@ -127,7 +153,8 @@ export const PostCard = ({ post }: PostCardProps) => {
             className="min-h-[200px]"
             value={comment}
             onChange={setComment}
-            disabled={isSubmitting || !isConnected}
+            disabled={isButtonDisabled}
+            key={resetKey}
           />
         </CardContent>
 
@@ -144,11 +171,11 @@ export const PostCard = ({ post }: PostCardProps) => {
           <Button 
             variant="default" 
             className="flex items-center gap-2 flex-1 justify-center"
-            disabled={isSubmitting || !isConnected}
+            disabled={isButtonDisabled}
             onClick={handleCommentSubmit}
           >
             <MessageSquare className="h-4 w-4" />
-            {isSubmitting ? "Posting..." : "Post Comment"}
+            {isPending ? "Pending..." : isConfirming ? "Confirming..." : "Post Comment"}
           </Button>
         </CardFooter>
       </Card>

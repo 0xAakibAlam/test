@@ -1,6 +1,7 @@
 import { Post, Comment } from "@/types";
 import { maxterdXConfig, admin } from "@/contracts/MasterdX";
-import { useEstimateGas, useSendTransaction, useWriteContract } from "wagmi";
+import { useEstimateGas, useSendTransaction, useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { sepolia } from "wagmi/chains";
 
 import { ethers } from "ethers";
 import { MulticallWrapper } from "ethers-multicall-provider";
@@ -23,27 +24,25 @@ async function getReadOnlyContract(contractAddress, contractABI) {
 
 // Hook versions of addPost and addComment
 export const useAddPost = () => {
-  const { data: gasEstimate } = useEstimateGas({
-    address: maxterdXConfig.address as `0x${string}`,
-    abi: maxterdXConfig.abi,
-    functionName: 'addPost',
+  const { address } = useAccount();
+  const { writeContract, isPending, isSuccess, isError, data: hash } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
   });
 
-  const { sendTransaction, isPending, isSuccess, isError } = useSendTransaction();
-
   const addPost = async (postData: { postTitle: string, postBody: string }) => {
+    if (!address) {
+      throw new Error("No account connected");
+    }
+
     try {
-      if (!gasEstimate) return;
-
-      const estimatedGas = gasEstimate * BigInt(15) / BigInt(10);
-
-      await sendTransaction({
-        to: maxterdXConfig.address as `0x${string}`,
-        data: ethers.AbiCoder.defaultAbiCoder().encode(
-          ['string', 'string'],
-          [postData.postTitle, postData.postBody]
-        ),
-        gas: estimatedGas,
+      await writeContract({
+        address: maxterdXConfig.address as `0x${string}`,
+        abi: maxterdXConfig.abi,
+        functionName: 'addPost',
+        args: [postData.postTitle, postData.postBody],
+        account: address,
+        chain: sepolia,
       });
     } catch (error) {
       console.error("Error in addPost:", error);
@@ -55,32 +54,33 @@ export const useAddPost = () => {
     addPost,
     isPending,
     isSuccess,
-    isError
+    isError,
+    isConfirming,
+    isConfirmed,
+    hash
   };
 };
 
 export const useAddComment = () => {
-  const { data: gasEstimate } = useEstimateGas({
-    address: maxterdXConfig.address as `0x${string}`,
-    abi: maxterdXConfig.abi,
-    functionName: 'addComment',
+  const { address } = useAccount();
+  const { writeContract, isPending, isSuccess, isError, data: hash } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
   });
 
-  const { sendTransaction, isPending, isSuccess, isError } = useSendTransaction();
-
   const addComment = async (commentData: { postId: string, comment: string }) => {
+    if (!address) {
+      throw new Error("No account connected");
+    }
+
     try {
-      if (!gasEstimate) return;
-
-      const estimatedGas = gasEstimate * BigInt(15) / BigInt(10);
-
-      await sendTransaction({
-        to: maxterdXConfig.address as `0x${string}`,
-        data: ethers.AbiCoder.defaultAbiCoder().encode(
-          ['string', 'string'],
-          [commentData.postId, commentData.comment]
-        ),
-        gas: estimatedGas,
+      await writeContract({
+        address: maxterdXConfig.address as `0x${string}`,
+        abi: maxterdXConfig.abi,
+        functionName: 'addComment',
+        args: [commentData.postId as `0x${string}`, commentData.comment],
+        account: address,
+        chain: sepolia,
       });
     } catch (error) {
       console.error("Error in addComment:", error);
@@ -92,7 +92,10 @@ export const useAddComment = () => {
     addComment,
     isPending,
     isSuccess,
-    isError
+    isError,
+    isConfirming,
+    isConfirmed,
+    hash
   };
 };
 

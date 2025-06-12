@@ -17,21 +17,45 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
   const [postBody, setPostBody] = useState("");
   const { isConnected } = useAppKitAccount();
   const [resetKey, setResetKey] = useState(0);
-  const { addPost, isPending, isSuccess, isError } = useAddPost();
+  const { addPost, isPending, isSuccess, isError, isConfirming, isConfirmed, hash } = useAddPost();
+  const [hasShownSuccess, setHasShownSuccess] = useState(false);
+
+  // Reset success flag when starting a new transaction
+  useEffect(() => {
+    if (isPending) {
+      setHasShownSuccess(false);
+    }
+  }, [isPending]);
 
   // Handle success state
   useEffect(() => {
-    if (isSuccess) {
+    if (isConfirmed && !hasShownSuccess) {
       setTitle("");
       setPostBody("");
       setResetKey(prev => prev + 1);
-      toast.success("Post added successfully!");
+      toast.success("Post added successfully!", {
+        description: (
+          <div className="flex items-center gap-2">
+            <span>Transaction:</span>
+            <a 
+              href={`https://sepolia.etherscan.io/tx/${hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 hover:text-blue-600 underline"
+            >
+              {hash?.slice(0, 6)}...{hash?.slice(-4)}
+            </a>
+          </div>
+        ),
+        duration: 5000,
+      });
+      setHasShownSuccess(true);
       
       if (onPostAdded) {
         onPostAdded();
       }
     }
-  }, [isSuccess, onPostAdded]);
+  }, [isConfirmed, onPostAdded, hash, hasShownSuccess]);
 
   // Handle error state
   useEffect(() => {
@@ -73,6 +97,8 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
     }
   };
 
+  const isButtonDisabled = isPending || isConfirming || !isConnected;
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -84,7 +110,7 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
               placeholder="Enter Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              disabled={isPending || !isConnected}
+              disabled={isButtonDisabled}
               className="mb-1 text-xs md:text-xl h-auto overflow-hidden"
               maxLength={100}
             />
@@ -96,18 +122,18 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
             value={postBody}
             onChange={setPostBody}
             className="min-h-80 resize-none overflow-hidden mb-4"
-            disabled={isPending || !isConnected}
+            disabled={isButtonDisabled}
             key={resetKey}
           />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end">
             <Button 
               type="submit" 
               variant="default"
-              disabled={isPending || !isConnected}
+              disabled={isButtonDisabled}
               className="w-full sm:w-auto"
             >
               <MessageSquare className="h-4 w-4" />
-              {isPending ? "Posting..." : "Post"}
+              {isPending ? "Pending..." : isConfirming ? "Confirming..." : "Post"}
             </Button>
           </div>
         </form>
