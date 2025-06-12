@@ -1,5 +1,7 @@
 import { Post, Comment } from "@/types";
-import { masterdXAddress, masterdXABI, admin } from "@/contracts/MasterdX";
+import { maxterdXConfig, admin } from "@/contracts/MasterdX";
+import { useEstimateGas, useSendTransaction, useWriteContract } from "wagmi";
+
 import { ethers } from "ethers";
 import { MulticallWrapper } from "ethers-multicall-provider";
 
@@ -19,175 +21,84 @@ async function getReadOnlyContract(contractAddress, contractABI) {
   return contractInstance;
 }
 
-async function getContract(contractAddress: string, contractABI: any) {
-  if (!window.ethereum) {
-    throw new Error("Please install MetaMask to use this feature");
-  }
+// Hook versions of addPost and addComment
+export const useAddPost = () => {
+  const { data: gasEstimate } = useEstimateGas({
+    address: maxterdXConfig.address as `0x${string}`,
+    abi: maxterdXConfig.abi,
+    functionName: 'addPost',
+  });
 
-  const provider = new ethers.BrowserProvider(window.ethereum as any);
-  await provider.send("eth_requestAccounts", []);
-  const signer = await provider.getSigner();
-  const contractInstance = new ethers.Contract(contractAddress, contractABI, signer);
-  return contractInstance;
-}
+  const { sendTransaction, isPending, isSuccess, isError } = useSendTransaction();
 
-// Post service functions
-export const getActivePosts = async (): Promise<Post[]> => {
-  try {
-    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
-    const numOfPost = await masterdX.totalPosts();
+  const addPost = async (postData: { postTitle: string, postBody: string }) => {
+    try {
+      if (!gasEstimate) return;
 
-    let postInfos: any = [];
-    for (let i=0; i<numOfPost; i++) {
-      const postId = await masterdX.postIds(i);
-      console.log("Raw postId:", postId);
-      
-      const postInfo = await masterdX.getPostInfo(postId);
-      if (!postInfo.archived) {
-        postInfos.push(postInfo);
-      }
+      const estimatedGas = gasEstimate * BigInt(15) / BigInt(10);
+
+      await sendTransaction({
+        to: maxterdXConfig.address as `0x${string}`,
+        data: ethers.AbiCoder.defaultAbiCoder().encode(
+          ['string', 'string'],
+          [postData.postTitle, postData.postBody]
+        ),
+        gas: estimatedGas,
+      });
+    } catch (error) {
+      console.error("Error in addPost:", error);
+      throw error;
     }
-    
-    return postInfos.map(q => ({
-      postId: q.postId,
-      owner: q.owner,
-      postTitle: q.postTitle,
-      postBody: q.postBody,
-      endTime: q.endTime,
-      archived: q.archived
-    }));
-  } catch (error) {
-    console.error("Error in getPosts:", error);
-    // Fallback to return an empty array if there's an error
-    return [];
-  }
+  };
+
+  return {
+    addPost,
+    isPending,
+    isSuccess,
+    isError
+  };
 };
 
-export const getPostById = async (id: string): Promise<Post | undefined> => {
-  try {
-    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
-    const postInfo = await masterdX.getPostInfo(id);
-    
-    return {
-      postId: postInfo.postId,
-      postTitle: postInfo.postTitle,
-      postBody: postInfo.postBody,
-      owner: postInfo.owner,
-      endTime: postInfo.endTime,
-      archived: postInfo.sentToHeaven,
-    };
-  } catch (error) {
-    console.error("Error in getPostById:", error);
-    return undefined;
-  }
-};
+export const useAddComment = () => {
+  const { data: gasEstimate } = useEstimateGas({
+    address: maxterdXConfig.address as `0x${string}`,
+    abi: maxterdXConfig.abi,
+    functionName: 'addComment',
+  });
 
-export const getUserPosts = async (owner: string): Promise<Post[]> => {
-  try {
-    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
-    const numOfPost = await masterdX.totalPosts();
-    console.log(numOfPost);
+  const { sendTransaction, isPending, isSuccess, isError } = useSendTransaction();
 
-    let postInfos: any = [];
-    for (let i=0; i<numOfPost; i++) {
-      const postId = await masterdX.postIds(i);
-      const postInfo = await masterdX.getPostInfo(postId);
-      if (postInfo.owner.toLowerCase() == owner.toLowerCase()) {
-        postInfos.push(postInfo);
-      }
+  const addComment = async (commentData: { postId: string, comment: string }) => {
+    try {
+      if (!gasEstimate) return;
+
+      const estimatedGas = gasEstimate * BigInt(15) / BigInt(10);
+
+      await sendTransaction({
+        to: maxterdXConfig.address as `0x${string}`,
+        data: ethers.AbiCoder.defaultAbiCoder().encode(
+          ['string', 'string'],
+          [commentData.postId, commentData.comment]
+        ),
+        gas: estimatedGas,
+      });
+    } catch (error) {
+      console.error("Error in addComment:", error);
+      throw error;
     }
-    
-    return postInfos.map(q => ({
-      postId: q.postId,
-      owner: q.owner,
-      postTitle: q.postTitle,
-      postBody: q.postBody,
-      endTime: q.endTime,
-      archived: q.archived,
-    }));
-  } catch (error) {
-    console.error("Error in getUserPosts:", error);
-    return [];
-  }
-};
+  };
 
-export const getArchivedPosts = async (): Promise<Post[]> => {
-  try {
-    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
-    const numOfPost = await masterdX.totalPosts();
-    console.log(numOfPost);
-
-    let postInfos: any = [];
-    for (let i=0; i<numOfPost; i++) {
-      const postId = await masterdX.postIds(i);
-      const postInfo = await masterdX.getPostInfo(postId);
-      console.log(postInfo);
-      if (postInfo.archived) {
-        postInfos.push(postInfo);
-      }
-    }
-    
-    return postInfos.map(q => ({
-      postId: q.postId,
-      owner: q.owner,
-      postTitle: q.postTitle,
-      postBody: q.postBody,
-      endTime: q.endTime,
-      archived: q.archived,
-    }));
-  } catch (error) {
-    console.error("Error in getArchivedPosts:", error);
-    return [];
-  }
-};
-
-export const addPost = async (postData: { postTitle: string, postBody: string }) => {
-  try {
-    const masterdX = await getContract(masterdXAddress, masterdXABI);
-    
-    const gasLimit = await masterdX.addPost.estimateGas(
-      postData.postTitle,
-      postData.postBody
-    );
-    const estimatedGas = gasLimit * BigInt(15) / BigInt(10);
-
-    const tx = await masterdX.addPost(
-      postData.postTitle,
-      postData.postBody,
-      {
-        gasLimit: estimatedGas,
-        maxFeePerGas: undefined,
-        maxPriorityFeePerGas: undefined
-      }
-    );
-    await tx.wait();
-
-  } catch (error) {
-    console.error("Error in addPost:", error);
-    throw error;
-  }
-};
-
-// Comment service functions
-export const getCommentsForPost = async (postId: string): Promise<Comment[]> => {
-  try {
-    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
-    const commentInfos = await masterdX.getCommentsInfo(postId);
-    
-    return commentInfos.map(a => ({
-      postId: a.postId,
-      comment: a.comment,
-      owner: a.owner,
-    }));
-  } catch (error) {
-    console.error("Error in getCommentsForPost:", error);
-    return [];
-  }
+  return {
+    addComment,
+    isPending,
+    isSuccess,
+    isError
+  };
 };
 
 export const getUserComments = async (owner: string): Promise<Comment[]> => {
   try {
-    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
+    const masterdX = await getReadOnlyContract(maxterdXConfig.address, maxterdXConfig.abi);
     const numOfPost = await masterdX.totalPosts();
     console.log(numOfPost);
 
@@ -212,60 +123,5 @@ export const getUserComments = async (owner: string): Promise<Comment[]> => {
   } catch (error) {
     console.error("Error in getUserComments:", error);
     return [];
-  }
-};
-
-export const getAdminPosts = async (): Promise<Post[]> => {
-  try {
-    const masterdX = await getReadOnlyContract(masterdXAddress, masterdXABI);
-    const numOfPost = await masterdX.totalPosts();
-    console.log(numOfPost);
-
-    let postInfos: any = [];
-    for (let i=0; i<numOfPost; i++) {
-      const postId = await masterdX.postIds(i);
-      const postInfo = await masterdX.getPostInfo(postId);
-      if (postInfo.owner.toLowerCase() == admin.toLowerCase()) {
-        postInfos.push(postInfo);
-      }
-    }
-    
-    return postInfos.map(q => ({
-      postId: q.postId,
-      owner: q.owner,
-      postTitle: q.postTitle,
-      postBody: q.postBody,
-      endTime: q.endTime,
-      archived: q.archived,
-    }));
-  } catch (error) {
-    console.error("Error in getUserPosts:", error);
-    return [];
-  }
-}
-
-export const addComment = async (commentData: { postId: string, comment: string }) => {
-  try {
-    const masterdX = await getContract(masterdXAddress, masterdXABI);
-    
-    const gasLimit = await masterdX.addComment.estimateGas(
-      commentData.postId,
-      commentData.comment
-    );
-    const estimatedGas = gasLimit * BigInt(15) / BigInt(10);
-    const tx = await masterdX.addComment(
-      commentData.postId,
-      commentData.comment,
-      {
-        gasLimit: estimatedGas,
-        maxFeePerGas: undefined,
-        maxPriorityFeePerGas: undefined
-      }
-    );
-    await tx.wait();
-    
-  } catch (error) {
-    console.error("Error in addComment:", error);
-    throw error;
   }
 };

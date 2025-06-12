@@ -1,47 +1,26 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { getUserPosts } from "@/services/dXService";
-import { Post } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown, Wallet, MessageSquare, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { usePosts } from "@/hooks/usePosts";
 
 export const MyPostsPage = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const { address, isConnected } = useAppKitAccount();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const { address, isConnected } = useAppKitAccount();
-  const navigate = useNavigate();
+  const { allPosts, isAllPostLoading } = usePosts();
 
-  useEffect(() => {
-    const fetchUserPosts = async () => {
-      if (!isConnected) {
-        setIsLoading(false);
-        return;
-      }
-      
-      setIsLoading(true);
-      try {
-        const data = await getUserPosts(address);
-        setPosts(data);
-      } catch (error) {
-        console.error("Error fetching user posts:", error);
-        toast.error("Failed to load my posts");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserPosts();
-  }, [address, isConnected]);
+  const myPosts = allPosts.filter((post) => {
+    return post.owner.toLowerCase() === address.toLowerCase();
+  })
 
   // Filter posts based on search term
-  const filteredPosts = posts.filter(post => 
+  const filteredPosts = myPosts.filter(post => 
     post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
     post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -76,7 +55,7 @@ export const MyPostsPage = () => {
               Connect wallet to view your posts
             </p>
           </div>
-        ) : isLoading ? (
+        ) : isAllPostLoading ? (
           <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
               {[1, 2, 3].map((i) => (

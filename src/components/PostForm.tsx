@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { addPost } from "@/services/dXService";
+import { useAddPost } from "@/services/dXService";
 import { Button } from "@/components/ui/button";
 import { RichTextArea } from "./RichTextArea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,9 +15,30 @@ interface PostFormProps {
 export const PostForm = ({ onPostAdded }: PostFormProps) => {
   const [title, setTitle] = useState("");
   const [postBody, setPostBody] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
   const [resetKey, setResetKey] = useState(0);
+  const { addPost, isPending, isSuccess, isError } = useAddPost();
+
+  // Handle success state
+  useEffect(() => {
+    if (isSuccess) {
+      setTitle("");
+      setPostBody("");
+      setResetKey(prev => prev + 1);
+      toast.success("Post added successfully!");
+      
+      if (onPostAdded) {
+        onPostAdded();
+      }
+    }
+  }, [isSuccess, onPostAdded]);
+
+  // Handle error state
+  useEffect(() => {
+    if (isError) {
+      toast.error("Failed to post. Please try again.");
+    }
+  }, [isError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,28 +63,13 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
       return;
     }
     
-    setIsSubmitting(true);
-    
     try {
-      
       await addPost({ 
         postTitle: title.trim(), 
         postBody: postBody.trim(), 
       });
-      
-      setTitle("");
-      setPostBody("");
-      setResetKey(prev => prev + 1);
-      toast.success("Post added successfully!");
-      
-      if (onPostAdded) {
-        onPostAdded();
-      }
     } catch (error) {
       console.error("Error posting post:", error);
-      toast.error("Failed to post post. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -78,7 +84,7 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
               placeholder="Enter Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              disabled={isSubmitting || !isConnected}
+              disabled={isPending || !isConnected}
               className="mb-1 text-xs md:text-xl h-auto overflow-hidden"
               maxLength={100}
             />
@@ -90,18 +96,18 @@ export const PostForm = ({ onPostAdded }: PostFormProps) => {
             value={postBody}
             onChange={setPostBody}
             className="min-h-80 resize-none overflow-hidden mb-4"
-            disabled={isSubmitting || !isConnected}
+            disabled={isPending || !isConnected}
             key={resetKey}
           />
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end">
             <Button 
               type="submit" 
               variant="default"
-              disabled={isSubmitting || !isConnected}
+              disabled={isPending || !isConnected}
               className="w-full sm:w-auto"
             >
               <MessageSquare className="h-4 w-4" />
-              {isSubmitting ? "Posting..." : "Post"}
+              {isPending ? "Posting..." : "Post"}
             </Button>
           </div>
         </form>

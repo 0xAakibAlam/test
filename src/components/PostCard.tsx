@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Post } from "@/types";
-import { addComment } from "@/services/dXService";
+import { useAddComment } from "@/services/dXService";
 import { formatDistanceToNow } from "date-fns";
 import { Eye, ChevronDown, MessageSquare, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ export const PostCard = ({ post }: PostCardProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCommentOverlay, setShowCommentOverlay] = useState(false);
   const { address, isConnected } = useAppKitAccount();
+  const { addComment, isPending, isSuccess, isError } = useAddComment();
 
   useEffect(() => {
     if (showCommentOverlay) {
@@ -36,14 +37,29 @@ export const PostCard = ({ post }: PostCardProps) => {
     };
   }, [showCommentOverlay]);
 
-  const handleCommentSubmit = async () => {
-    if (!comment.trim()) {
-      toast.error("Please enter an comment");
-      return;
+  // Handle success state
+  useEffect(() => {
+    if (isSuccess) {
+      setComment("");
+      toast.success("Comment added successfully!");
     }
-    
+  }, [isSuccess]);
+
+  // Handle error state
+  useEffect(() => {
+    if (isError) {
+      toast.error("Failed to comment. Please try again.");
+    }
+  }, [isError]);
+
+  const handleCommentSubmit = async () => {
     if (!isConnected) {
       toast.error("Please connect your wallet to post an comment");
+      return;
+    }
+
+    if (!comment.trim()) {
+      toast.error("Please enter an comment");
       return;
     }
 
@@ -54,15 +70,8 @@ export const PostCard = ({ post }: PostCardProps) => {
         postId: post.postId, 
         comment: comment.trim() 
       });
-      
-      setComment("");
-      setShowCommentOverlay(false);
-      toast.success("Comment posted successfully!");
     } catch (error) {
       console.error("Error posting comment:", error);
-      toast.error("Failed to post comment. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

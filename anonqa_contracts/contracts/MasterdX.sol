@@ -65,6 +65,13 @@ contract MasterdX is
         return postData[_postId];
     }
 
+    function getAllPosts() external view returns (PostInfo[] memory allPostInfo) {
+        allPostInfo = new PostInfo[](postIds.length);
+        for (uint256 i=0; i<postIds.length; i++) {
+            allPostInfo[i] = postData[postIds[i]];
+        }
+    }
+
     function getCommentsInfo(bytes32 _postId) external view returns (CommentInfo[] memory) {
         return commentData[_postId];
     }

@@ -12,65 +12,42 @@ import { AnnouncementPage } from "@/pages/AnnouncementPage";
 import { ArchivePage } from "@/pages/ArchivePage";
 import NotFound from "@/pages/NotFound";
 
-import { createAppKit } from "@reown/appkit/react";
-import { EthersAdapter } from "@reown/appkit-adapter-ethers";
-import { sepolia } from "@reown/appkit/networks";
+import { sepolia } from "wagmi/chains"
+import { WagmiProvider, createConfig, http } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// 1. Get projectId
-const projectId = import.meta.env.VITE_WAGMI_PROJECT_ID
-
-// 2. Set the networks
-const networks = [sepolia] as [typeof sepolia];
-
-// 3. Create a metadata object - optional
-const metadata = {
-  name: "dX",
-  description: "Decentralized Q&A Platform",
-  url: "https://anonqa0.netlify.app/", // origin must match your domain & subdomain
-  icons: [],
-};
-
-// 4. Create a AppKit instance
-createAppKit({
-  adapters: [new EthersAdapter()],
-  networks,
-  metadata,
-  projectId,
-  features: {
-    analytics: true, // Optional - defaults to your Cloud configuration
-    email: false, // Disable email login
-    socials: false, // Disable social logins
-  },
-  themeVariables: {
-    '--w3m-accent': '#0059b3',
-    '--w3m-font-family': "'Arial', sans-serif",
-    '--w3m-color-mix': '#ffffff',
-    '--w3m-color-mix-strength': 0,
-    '--w3m-font-size-master': '11px',
-    '--w3m-border-radius-master': '1px',
-    '--w3m-z-index': 1000,
+const config = createConfig({
+  chains: [sepolia],
+  transports: {
+    [sepolia.id]: http(),
   },
 });
 
+const queryClient = new QueryClient();
+
 const App = () => (
-  <TooltipProvider>
-    <AppLayout>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/app" element={<HomePage />} />
-          <Route path="/app/post/:id" element={<PostInfoPage />} />
-          <Route path="/app/my-posts" element={<MyPostsPage />} />
-          <Route path="/app/my-comments" element={<MyCommentsPage />} />
-          <Route path="/app/announcements" element={<AnnouncementPage />} />
-          <Route path="/app/archives" element={<ArchivePage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </AppLayout>
-  </TooltipProvider>
+  <WagmiProvider config={config}>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AppLayout>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/app" element={<HomePage />} />
+              <Route path="/app/post/:id" element={<PostInfoPage />} />
+              <Route path="/app/my-posts" element={<MyPostsPage />} />
+              <Route path="/app/my-comments" element={<MyCommentsPage />} />
+              <Route path="/app/announcements" element={<AnnouncementPage />} />
+              <Route path="/app/archives" element={<ArchivePage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AppLayout>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 );
 
 export default App;

@@ -1,39 +1,24 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { getAdminPosts } from "@/services/dXService";
-import { Post } from "@/types";
-import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown, Archive } from "lucide-react";
+import { usePosts } from "@/hooks/usePosts";
+import { admin } from "@/contracts/MasterdX";
 
 export const AnnouncementPage = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const { allPosts, isAllPostLoading } = usePosts();
 
-  useEffect(() => {
-    const fetchArchivedPosts = async () => {
-      setIsLoading(true);
-      try {
-        const data = await getAdminPosts();
-        setPosts(data);
-      } catch (error) {
-        console.error("Error fetching archived posts:", error);
-        toast.error("Failed to load archived posts");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchArchivedPosts();
-  }, []);
+  // Filter posts that are made by admin
+  const announcementsPost = allPosts.filter((post) => {
+    return post.owner.toLowerCase() == admin.toLowerCase();
+  })
 
   // Filter posts based on search term
-  const filteredPosts = posts.filter(post => 
+  const filteredPosts = announcementsPost.filter(post => 
     post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
     post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -58,7 +43,7 @@ export const AnnouncementPage = () => {
           <p className="text-muted-foreground mt-2">View all Admin Posts</p>
         </div>
         
-        {isLoading ? (
+        {isAllPostLoading ? (
           <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
               {[1, 2, 3].map((i) => (

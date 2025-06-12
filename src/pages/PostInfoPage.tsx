@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { CommentForm } from "@/components/CommentForm";
-import { getPostById, getCommentsForPost } from "@/services/dXService";
 import { Post, Comment } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
-import { toast } from "@/components/ui/sonner";
 import { Clock } from "lucide-react";
 import { CommentCard } from "@/components/CommentCard";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
+import { useReadContract } from "wagmi"
+import { maxterdXConfig } from "@/contracts/MasterdX";
 
 export const PostInfoPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,40 +17,53 @@ export const PostInfoPage = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchData = async () => {
-    if (!id) return;
-    
-    setIsLoading(true);
-    try {
-      const [postData, commentData] = await Promise.all([
-        getPostById(id),
-        getCommentsForPost(id)
-      ]);
-      
-      if (postData) {
-        setPost(postData);
-      } else {
-        toast.error("Post not found");
-      }
-      
-      setComments(commentData || []);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      toast.error("Failed to load post and comments");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: postInfo, isLoading: isPostLoading } = useReadContract({
+    address: maxterdXConfig.address as `0x${string}`,
+    abi: maxterdXConfig.abi,
+    functionName: "getPostInfo",
+    args: [id as `0x${string}`],
+  });
+
+  const { data: commentsInfo, isLoading: isCommentsLoading } = useReadContract({
+    address: maxterdXConfig.address as `0x${string}`,
+    abi: maxterdXConfig.abi,
+    functionName: "getCommentsInfo",
+    args: [id as `0x${string}`],
+  });
 
   useEffect(() => {
-    fetchData();
-  }, [id]);
+    if (postInfo) {
+      const convertedPost: Post = {
+        postId: postInfo.postId,
+        postTitle: postInfo.postTitle,
+        postBody: postInfo.postBody,
+        owner: postInfo.owner,
+        endTime: postInfo.endTime.toString(), // Convert bigint to string
+        archived: postInfo.archived
+      };
+      setPost(convertedPost);
+    }
+  }, [postInfo]);
+
+  useEffect(() => {
+    if (commentsInfo) {
+      const convertedComments: Comment[] = commentsInfo.map((comment: any) => ({
+        postId: comment.postId,
+        comment: comment.comment,
+        owner: comment.owner
+      }));
+      setComments(convertedComments);
+    }
+  }, [commentsInfo]);
+
+  useEffect(() => {
+    setIsLoading(isPostLoading || isCommentsLoading);
+  }, [isPostLoading, isCommentsLoading]);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-6 max-w-7xl">
-
         {isLoading ? (
           <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
@@ -91,7 +104,9 @@ export const PostInfoPage = () => {
               </CardContent>
             </Card>
 
-            <CommentForm postId={id as string} onCommentAdded={fetchData} />
+            <CommentForm postId={id as string} onCommentAdded={() => {
+              setComments([...comments]);
+            }} />
 
             <h2 className="text-xl font-bold mb-4 mt-8">
               Comments
@@ -99,7 +114,7 @@ export const PostInfoPage = () => {
 
             {comments.length > 0 ? (
               comments.map((comment) => (
-                <CommentCard comment={comment} postTitle={""}/>
+                <CommentCard key={comment.postId} comment={comment} postTitle=""/>
               ))
             ) : (
               <div className="text-center py-10 bg-muted/20 rounded-lg">

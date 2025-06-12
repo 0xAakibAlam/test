@@ -2,38 +2,24 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { getActivePosts } from "@/services/dXService";
-import { Post } from "@/types";
-import { toast } from "@/components/ui/sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown, Archive } from "lucide-react";
+import { usePosts } from "@/hooks/usePosts";
 
 export const ArchivePage = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const { allPosts, isAllPostLoading } = usePosts();
 
-  useEffect(() => {
-    const fetchArchivedPosts = async () => {
-      setIsLoading(true);
-      try {
-        const data = await getActivePosts();
-        setPosts(data);
-      } catch (error) {
-        console.error("Error fetching archived posts:", error);
-        toast.error("Failed to load archived posts");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchArchivedPosts();
-  }, []);
+  // Filter posts that have expired
+  const archivedPosts = allPosts.filter((post) => {
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    return currentTimestamp >= parseInt(post.endTime);
+  })
 
   // Filter posts based on search term
-  const filteredPosts = posts.filter(post => 
+  const filteredPosts = archivedPosts.filter(post => 
     post.postTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
     post.postBody.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -61,7 +47,7 @@ export const ArchivePage = () => {
           <p className="text-muted-foreground mt-2">Browse through all archived posts</p>
         </div>
         
-        {isLoading ? (
+        {isAllPostLoading ? (
           <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
               {[1, 2, 3].map((i) => (

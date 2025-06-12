@@ -1,7 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppKitAccount } from "@reown/appkit/react";
-import { addComment } from "@/services/dXService";
+import { useAddComment } from "@/services/dXService";
 import { Button } from "@/components/ui/button";
 import { RichTextArea } from "./RichTextArea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,17 +17,37 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { isConnected } = useAppKitAccount();
+  const { addComment, isPending, isSuccess, isError } = useAddComment();
+
+  // Handle success state
+  useEffect(() => {
+    if (isSuccess) {
+      setComment("");
+      toast.success("Comment added successfully!");
+      
+      if (onCommentAdded) {
+        onCommentAdded();
+      }
+    }
+  }, [isSuccess, onCommentAdded]);
+
+  // Handle error state
+  useEffect(() => {
+    if (isError) {
+      toast.error("Failed to comment. Please try again.");
+    }
+  }, [isError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!comment.trim()) {
-      toast.error("Please enter an comment");
+    if (!isConnected) {
+      toast.error("Please connect your wallet to post a comment");
       return;
     }
-    
-    if (!isConnected) {
-      toast.error("Please connect your wallet to post an comment");
+
+    if (!comment.trim()) {
+      toast.error("Please enter an comment");
       return;
     }
     
@@ -38,18 +58,8 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
         postId, 
         comment: comment.trim() 
       });
-      
-      setComment("");
-      toast.success("Comment posted successfully!");
-      
-      if (onCommentAdded) {
-        onCommentAdded();
-      }
     } catch (error) {
       console.error("Error posting comment:", error);
-      toast.error("Failed to post comment. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
   

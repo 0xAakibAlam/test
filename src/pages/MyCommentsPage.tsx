@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import { getUserComments, getPostById } from "@/services/dXService";
+import { getUserComments } from "@/services/dXService";
 import { Comment } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
 import { MessageCircle, Wallet, ArrowRight, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CommentCard } from "@/components/CommentCard";
+import { useReadContract } from "wagmi";
+import { maxterdXConfig } from "@/contracts/MasterdX";
 
 interface CommentWithPostTitle extends Comment {
   postTitle?: string;
@@ -33,10 +35,16 @@ export const MyCommentsPage = () => {
         const commentsWithPostTitle = await Promise.all(
           commentsData.map(async (comment) => {
             try {
-              const post = await getPostById(comment.postId);
+              const { data: postInfo, isLoading: isPostLoading } = useReadContract({
+                address: maxterdXConfig.address as `0x${string}`,
+                abi: maxterdXConfig.abi,
+                functionName: "getPostInfo",
+                args: [comment.postId as `0x${string}`],
+              });
+
               return {
                 ...comment,
-                postTitle: post?.postTitle || "Post not found"
+                postTitle: postInfo?.postTitle || "Post not found"
               };
             } catch (error) {
               console.error("Error fetching post:", error);
