@@ -1,9 +1,17 @@
-// import { Comment } from "@/types";
 import { maxterdXConfig } from "@/contracts/MasterdX";
 import { useWriteContract, useAccount, useWaitForTransactionReceipt, useReadContract } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { useState, useEffect } from "react";
 import { CommentWithPostTitle } from "@/types";
+
+const openWalletApp = () => {
+  // Check if we're on mobile
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    // Open MetaMask app
+    window.location.href = 'https://metamask.app.link/dapp/anonqa0.netlify.app/';
+  }
+};
 
 export const useAddPost = () => {
   const { address } = useAccount();
@@ -26,6 +34,7 @@ export const useAddPost = () => {
         account: address,
         chain: sepolia,
       });
+      openWalletApp();
     } catch (error) {
       console.error("Error in addPost:", error);
       throw error;
@@ -64,6 +73,7 @@ export const useAddComment = () => {
         account: address,
         chain: sepolia,
       });
+      openWalletApp();
     } catch (error) {
       console.error("Error in addComment:", error);
       throw error;
