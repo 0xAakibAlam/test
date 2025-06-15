@@ -33,15 +33,15 @@ export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
       setResetKey(prev => prev + 1);
       toast.success("Comment added successfully!", {
         description: (
-          <div className="flex items-center gap-2">
-            <span>Transaction:</span>
+          <div>
+            Transaction:
             <a 
               href={`https://sepolia.etherscan.io/tx/${hash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-500 hover:text-blue-600 underline"
+              className="text-blue-500 hover:text-blue-600 underline ml-2"
             >
-              {hash?.slice(0, 6)}...{hash?.slice(-4)}
+              {hash}
             </a>
           </div>
         ),
