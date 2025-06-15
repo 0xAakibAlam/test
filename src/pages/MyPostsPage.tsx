@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
 import { useAppKitAccount } from "@reown/appkit/react";
@@ -16,7 +16,7 @@ export const MyPostsPage = () => {
   const { allPosts, isAllPostLoading } = usePosts();
 
   const myPosts = allPosts.filter((post) => {
-    return post.owner.toLowerCase() === address.toLowerCase();
+    return post.owner.toLowerCase() === address;
   })
 
   // Filter posts based on search term
@@ -119,21 +119,3 @@ export const MyPostsPage = () => {
     </div>
   );
 };
-
-const floatAnimation = `
-@keyframes float {
-  0% {
-    transform: translateY(0px) scale(1);
-  }
-  50% {
-    transform: translateY(-5px) scale(1.05);
-  }
-  100% {
-    transform: translateY(0px) scale(1);
-  }
-}
-`;
-
-const style = document.createElement('style');
-style.textContent = floatAnimation;
-document.head.appendChild(style);

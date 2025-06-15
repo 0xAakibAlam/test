@@ -1,28 +1,10 @@
-import { Post, Comment } from "@/types";
-import { maxterdXConfig, admin } from "@/contracts/MasterdX";
-import { useEstimateGas, useSendTransaction, useWriteContract, useAccount, useWaitForTransactionReceipt } from "wagmi";
+// import { Comment } from "@/types";
+import { maxterdXConfig } from "@/contracts/MasterdX";
+import { useWriteContract, useAccount, useWaitForTransactionReceipt, useReadContract } from "wagmi";
 import { sepolia } from "wagmi/chains";
+import { useState, useEffect } from "react";
+import { CommentWithPostTitle } from "@/types";
 
-import { ethers } from "ethers";
-import { MulticallWrapper } from "ethers-multicall-provider";
-
-function createMultiCallProvider() {
-  const provider = new ethers.JsonRpcProvider(
-    `https://ethereum-sepolia-rpc.publicnode.com`
-  );
-  return MulticallWrapper.wrap(provider as any);
-}
-
-async function getReadOnlyContract(contractAddress, contractABI) {
-  const contractInstance = new ethers.Contract(
-    contractAddress,
-    contractABI,
-    createMultiCallProvider()
-  );
-  return contractInstance;
-}
-
-// Hook versions of addPost and addComment
 export const useAddPost = () => {
   const { address } = useAccount();
   const { writeContract, isPending, isSuccess, isError, data: hash } = useWriteContract();
@@ -99,32 +81,66 @@ export const useAddComment = () => {
   };
 };
 
-export const getUserComments = async (owner: string): Promise<Comment[]> => {
-  try {
-    const masterdX = await getReadOnlyContract(maxterdXConfig.address, maxterdXConfig.abi);
-    const numOfPost = await masterdX.totalPosts();
-    console.log(numOfPost);
+export const useGetUserComments = (owner: string) => {
+  const { data: numOfPosts } = useReadContract({
+    address: maxterdXConfig.address as `0x${string}`,
+    abi: maxterdXConfig.abi,
+    functionName: 'totalPosts',
+  });
 
-    let userComments: any = [];
-    for (let i=0; i<numOfPost; i++) {
-      const postId = await masterdX.postIds(i);
-      const commentInfos = await masterdX.getCommentsInfo(postId);
+  const [userComments, setUserComments] = useState<CommentWithPostTitle[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-      for (let j=0; j<commentInfos.length; j++) {
-        const commentInfo = await masterdX.commentData(postId, j);
-        if (commentInfo.owner.toLowerCase() == owner.toLowerCase()) {
-          userComments.push(commentInfo);
-        }
+  const { data: postId } = useReadContract({
+    address: maxterdXConfig.address as `0x${string}`,
+    abi: maxterdXConfig.abi,
+    functionName: 'postIds',
+    args: [BigInt(currentIndex)],
+  });
+
+  const { data: postInfo } = useReadContract({
+    address: maxterdXConfig.address as `0x${string}`,
+    abi: maxterdXConfig.abi,
+    functionName: 'getPostInfo',
+    args: [postId],
+  });
+
+  const { data: commentInfos } = useReadContract({
+    address: maxterdXConfig.address as `0x${string}`,
+    abi: maxterdXConfig.abi,
+    functionName: 'getCommentsInfo',
+    args: [postId],
+  });
+
+  console.log("commentInfos", commentInfos);
+
+  useEffect(() => {
+    if (!numOfPosts || !owner || !commentInfos || !postId) return;
+
+    // Process comments for the current post
+    commentInfos.forEach((commentInfo: any) => {
+      const { postId: commentPostId, comment, owner: commentOwner } = commentInfo;
+      if (commentOwner && commentOwner.toLowerCase() === owner.toLowerCase()) {
+        setUserComments(prev => [
+          ...prev,
+          {
+            postId: commentPostId,
+            comment: comment,
+            owner: commentOwner,
+            postTitle: postInfo?.postTitle,
+          },
+        ]);
       }
+    });
+
+    // Move to next post if we've processed all comments
+    if (currentIndex < Number(numOfPosts) - 1) {
+      setCurrentIndex(prev => prev + 1);
     }
-    
-    return userComments.map(a => ({
-      postId: a.postId,
-      comment: a.comment,
-      owner: a.owner,
-    }));
-  } catch (error) {
-    console.error("Error in getUserComments:", error);
-    return [];
-  }
+  }, [commentInfos, currentIndex, numOfPosts, owner, postId]);
+
+  return {
+    comments: userComments,
+    isLoading: !numOfPosts,
+  };
 };

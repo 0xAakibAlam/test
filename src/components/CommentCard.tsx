@@ -1,9 +1,5 @@
 import { Comment } from "@/types";
-import { formatDistanceToNow } from "date-fns";
-import { Eye, Link as LucideLink, ThumbsUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RichTextRenderer } from "./RichTextRenderer";
 import { Link } from "react-router-dom";
 
@@ -17,7 +13,7 @@ export const CommentCard = ({ comment, postTitle }: CommentCardProps) => {
     <Card className="mb-4 hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary/20">
       {postTitle && (
         <CardHeader className="pb-2 px-3 md:px-6">
-          <Link to={`/post/${comment.postId}`}>
+          <Link to={`/app/post/${comment.postId}`}>
             <CardTitle className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
               {postTitle}
             </CardTitle>

@@ -1,72 +1,36 @@
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
-import { getUserComments } from "@/services/dXService";
-import { Comment } from "@/types";
+import { useGetUserComments } from "@/services/dXService";
+import { CommentWithPostTitle } from "@/types";
 import { useAppKitAccount } from "@reown/appkit/react";
 import { toast } from "@/components/ui/sonner";
 import { MessageCircle, Wallet, ArrowRight, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CommentCard } from "@/components/CommentCard";
-import { useReadContract } from "wagmi";
-import { maxterdXConfig } from "@/contracts/MasterdX";
-
-interface CommentWithPostTitle extends Comment {
-  postTitle?: string;
-}
 
 export const MyCommentsPage = () => {
   const [comments, setComments] = useState<CommentWithPostTitle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { address, isConnected } = useAppKitAccount();
   const navigate = useNavigate();
+  const { comments: userComments, isLoading: isLoadingComments } = useGetUserComments(address || '');
 
   useEffect(() => {
-    const fetchUserComments = async () => {
-      if (!isConnected) {
-        setIsLoading(false);
-        return;
-      }
-      
-      setIsLoading(true);
-      try {
-        const commentsData = await getUserComments(address);
-        
-        // Fetch the post text for each comment
-        const commentsWithPostTitle = await Promise.all(
-          commentsData.map(async (comment) => {
-            try {
-              const { data: postInfo, isLoading: isPostLoading } = useReadContract({
-                address: maxterdXConfig.address as `0x${string}`,
-                abi: maxterdXConfig.abi,
-                functionName: "getPostInfo",
-                args: [comment.postId as `0x${string}`],
-              });
-
-              return {
-                ...comment,
-                postTitle: postInfo?.postTitle || "Post not found"
-              };
-            } catch (error) {
-              console.error("Error fetching post:", error);
-              return {
-                ...comment,
-                postTitle: "Post not found"
-              };
-            }
-          })
-        );
-        
-        setComments(commentsWithPostTitle);
-      } catch (error) {
-        console.error("Error fetching user comments:", error);
-        toast.error("Failed to load my comments");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserComments();
-  }, [address, isConnected]);
+    if (!isConnected || !userComments) {
+      setIsLoading(false);
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      setComments(userComments);
+    } catch (error) {
+      console.error("Error processing comments:", error);
+      toast.error("Failed to load my comments");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [userComments, isConnected]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -82,14 +46,14 @@ export const MyCommentsPage = () => {
 
         {!isConnected ? (
           <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
-          <div className="flex items-center gap-3 mb-2 animate-in fade-in-50 zoom-in-50 duration-700">
-            <Wallet className="h-8 w-8 animate-[float_3s_ease-in-out_infinite]" />
-            <h2 className="text-2xl font-semibold">Connect Your Wallet</h2>
+            <div className="flex items-center gap-3 mb-2 animate-in fade-in-50 zoom-in-50 duration-700">
+              <Wallet className="h-8 w-8 animate-[float_3s_ease-in-out_infinite]" />
+              <h2 className="text-2xl font-semibold">Connect Your Wallet</h2>
+            </div>
+            <p className="text-muted-foreground mb-6 max-w-md animate-in fade-in-50 slide-in-from-bottom-2 duration-1000">
+              Please connect wallet to view your comments.
+            </p>
           </div>
-          <p className="text-muted-foreground mb-6 max-w-md animate-in fade-in-50 slide-in-from-bottom-2 duration-1000">
-            Please connect wallet to view your comments.
-          </p>
-        </div>
         ) : isLoading ? (
           <div className="flex justify-center items-center py-4 md:py-8">
             <div className="w-full space-y-4">
@@ -112,7 +76,7 @@ export const MyCommentsPage = () => {
         ) : comments.length > 0 ? (
           <div>
             {comments.map((comment) => (
-              <CommentCard comment={comment} postTitle={comment.postTitle} />
+              <CommentCard key={comment.postId} comment={comment} postTitle={comment.postTitle} />
             ))}
           </div>
         ) : (
@@ -134,21 +98,3 @@ export const MyCommentsPage = () => {
     </div>
   );
 };
-
-const floatAnimation = `
-@keyframes float {
-  0% {
-    transform: translateY(0px) scale(1);
-  }
-  50% {
-    transform: translateY(-5px) scale(1.05);
-  }
-  100% {
-    transform: translateY(0px) scale(1);
-  }
-}
-`;
-
-const style = document.createElement('style');
-style.textContent = floatAnimation;
-document.head.appendChild(style);

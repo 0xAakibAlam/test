@@ -13,6 +13,13 @@ export interface Comment {
   owner: string;
 }
 
+export interface CommentWithPostTitle {
+  postId: string;
+  comment: string;
+  owner: string;
+  postTitle: string;
+}
+
 export interface WalletState {
   address: string;
   isConnected: boolean;
