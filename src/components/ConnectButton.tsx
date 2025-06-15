@@ -27,7 +27,7 @@ export const CustomConnectButton = () => {
                   <button
                     onClick={openConnectModal}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-xl font-semibold border shadow-md transition-all duration-200 transform",
+                      "flex items-center gap-2 px-3 py-2 rounded-lg border shadow-md transition-all duration-200 transform",
                       theme === "dark"
                         ? "bg-white text-black border-gray-300 hover:bg-gray-100"
                         : "bg-black text-white border-gray-800 hover:bg-gray-900",
@@ -45,7 +45,7 @@ export const CustomConnectButton = () => {
                   <button
                     onClick={openChainModal}
                     className={cn(
-                      "flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold border shadow-md transition-all duration-200 transform text-red-600 border-red-300 bg-red-50 hover:bg-red-100 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
+                      "flex items-center gap-2 px-3 py-2 rounded-lg border shadow-md transition-all duration-200 transform text-red-600 border-red-300 bg-red-50 hover:bg-red-100 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400"
                     )}
                   >
                     <span>Wrong network</span>
@@ -58,7 +58,7 @@ export const CustomConnectButton = () => {
                   <button
                     onClick={openAccountModal}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-xl font-semibold border shadow-md transition-all duration-200 transform",
+                      "flex items-center gap-2 px-3 py-2 rounded-lg border shadow-md transition-all duration-200 transform",
                       theme === "dark"
                         ? "bg-white text-black border-gray-300 hover:bg-gray-100"
                         : "bg-black text-white border-gray-800 hover:bg-gray-900",
