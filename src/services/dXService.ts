@@ -35,6 +35,8 @@ export const useAddPost = () => {
         chain: sepolia,
       });
 
+      // wait for 10 seconds
+      await new Promise((resolve) => setTimeout(resolve, 10000));
       openWalletApp();
     } catch (error: any) {
       console.error("Error in addPost:", error);
@@ -79,6 +81,8 @@ export const useAddComment = () => {
         chain: sepolia,
       });
 
+      // wait for 10 seconds
+      await new Promise((resolve) => setTimeout(resolve, 10000));
       openWalletApp();
     } catch (error: any) {
       console.error("Error in addComment:", error);
