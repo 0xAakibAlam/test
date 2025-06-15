@@ -11,32 +11,30 @@ import { AnnouncementPage } from "@/pages/AnnouncementPage";
 import { ArchivePage } from "@/pages/ArchivePage";
 import NotFound from "@/pages/NotFound";
 
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import '@rainbow-me/rainbowkit/styles.css';
+
+import {
+  getDefaultConfig,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
 
 import { sepolia } from "wagmi/chains"
-import { WagmiProvider, createConfig, http } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const config = createConfig(
-  getDefaultConfig({
-    chains: [sepolia],
-    transports: {
-      [sepolia.id]: http(),
-    },
-    appName: "dX",
-    appUrl: "https://anonqa0.netlify.app/",
-    appDescription: "Decentralized Social Platform",
-    walletConnectProjectId: import.meta.env.VITE_WAGMI_PROJECT_ID,
-    enableFamily: false
-  })
-);
+const config = getDefaultConfig({
+  appName: 'dX',
+  projectId: import.meta.env.VITE_WAGMI_PROJECT_ID,
+  chains: [sepolia],
+  ssr: false, // If your dApp uses server side rendering (SSR)
+});
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
-      <ConnectKitProvider>
+      <RainbowKitProvider>
         <TooltipProvider>
           <AppLayout>
             <Sonner position="top-right" />
@@ -54,7 +52,7 @@ const App = () => (
             </BrowserRouter>
           </AppLayout>
         </TooltipProvider>
-      </ConnectKitProvider>
+      </RainbowKitProvider>
     </QueryClientProvider>
   </WagmiProvider>
 );
