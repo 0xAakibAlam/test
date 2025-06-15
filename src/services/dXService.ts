@@ -9,7 +9,7 @@ const openWalletApp = () => {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (isMobile) {
     // Open MetaMask app
-    window.location.href = 'https://metamask.app.link/cw';
+    window.location.href = 'https://metamask.app.link/dapp/anonqa0.netlify.app/';
   }
 };
 
