@@ -4,15 +4,6 @@ import { sepolia } from "wagmi/chains";
 import { useState, useEffect } from "react";
 import { CommentWithPostTitle } from "@/types";
 
-const openWalletApp = () => {
-  // Check if we're on mobile
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  if (isMobile) {
-    // Open MetaMask app
-    window.location.href = 'https://metamask.app.link/dapp/anonqa0.netlify.app/';
-  }
-};
-
 export const useAddPost = () => {
   const { address } = useAccount();
   const { writeContract, isPending, isSuccess, isError, data: hash } = useWriteContract();
@@ -34,9 +25,15 @@ export const useAddPost = () => {
         account: address,
         chain: sepolia,
       });
-      openWalletApp();
-    } catch (error) {
+
+      // Add a small delay to allow mobile wallets to process
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (error: any) {
       console.error("Error in addPost:", error);
+      // Handle specific mobile wallet errors
+      if (error.message?.includes("user rejected")) {
+        throw new Error("Transaction was rejected by user");
+      }
       throw error;
     }
   };
@@ -73,9 +70,15 @@ export const useAddComment = () => {
         account: address,
         chain: sepolia,
       });
-      openWalletApp();
-    } catch (error) {
+
+      // Add a small delay to allow mobile wallets to process
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (error: any) {
       console.error("Error in addComment:", error);
+      // Handle specific mobile wallet errors
+      if (error.message?.includes("user rejected")) {
+        throw new Error("Transaction was rejected by user");
+      }
       throw error;
     }
   };
