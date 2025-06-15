@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { toast } from "@/components/ui/sonner";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useAccount } from "wagmi";
 import { RichTextArea } from "./RichTextArea";
 import { RichTextRenderer } from "./RichTextRenderer";
 
@@ -21,7 +21,7 @@ export const PostCard = ({ post }: PostCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [comment, setComment] = useState("");
   const [showCommentOverlay, setShowCommentOverlay] = useState(false);
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useAccount();
   const { addComment, isPending, isSuccess, isError, isConfirming, isConfirmed, hash } = useAddComment();
   const [hasShownSuccess, setHasShownSuccess] = useState(false);
   const [resetKey, setResetKey] = useState(0);

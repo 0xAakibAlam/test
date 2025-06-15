@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { useGetUserComments } from "@/services/dXService";
 import { CommentWithPostTitle } from "@/types";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useAccount } from "wagmi";
 import { toast } from "@/components/ui/sonner";
 import { MessageCircle, Wallet, ArrowRight, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import { CommentCard } from "@/components/CommentCard";
 export const MyCommentsPage = () => {
   const [comments, setComments] = useState<CommentWithPostTitle[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useAccount();
   const navigate = useNavigate();
   const { comments: userComments, isLoading: isLoadingComments } = useGetUserComments(address || '');
 

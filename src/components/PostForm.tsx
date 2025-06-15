@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useAccount } from "wagmi";
 import { useAddPost } from "@/services/dXService";
 import { Button } from "@/components/ui/button";
 import { RichTextArea } from "./RichTextArea";
@@ -15,7 +15,7 @@ interface PostFormProps {
 export const PostForm = ({ onPostAdded }: PostFormProps) => {
   const [title, setTitle] = useState("");
   const [postBody, setPostBody] = useState("");
-  const { isConnected } = useAppKitAccount();
+  const { isConnected } = useAccount();
   const [resetKey, setResetKey] = useState(0);
   const { addPost, isPending, isSuccess, isError, isConfirming, isConfirmed, hash } = useAddPost();
   const [hasShownSuccess, setHasShownSuccess] = useState(false);

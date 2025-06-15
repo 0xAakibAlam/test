@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useAppKitTheme } from "@reown/appkit/react";
 
 type Theme = "light" | "dark";
 
@@ -12,14 +11,12 @@ const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<Theme>("light");
-  const { setThemeMode, setThemeVariables } = useAppKitTheme();
   // Initialize theme from localStorage or system preference
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as Theme;
     
     if (savedTheme) {
       setTheme(savedTheme);
-      setThemeMode(savedTheme);
       document.documentElement.classList.toggle("dark", savedTheme === "dark");
       // Update favicon
       const favicon = document.getElementById("favicon") as HTMLLinkElement;
@@ -28,7 +25,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
       }
     } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       setTheme("dark");
-      setThemeMode("dark");
       document.documentElement.classList.add("dark");
       // Update favicon for dark mode
       const favicon = document.getElementById("favicon") as HTMLLinkElement;
@@ -49,8 +45,6 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     if (favicon) {
       favicon.href = newTheme === "light" ? "/exDark.png" : "/exLight.png";
     }
-
-    setThemeMode(newTheme);
   };
 
   return (

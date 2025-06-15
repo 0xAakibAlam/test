@@ -1,46 +1,42 @@
-import { createAppKit } from "@reown/appkit/react";
-import { EthersAdapter } from "@reown/appkit-adapter-ethers";
-import { sepolia } from "@reown/appkit/networks";
-
-const projectId = import.meta.env.VITE_WAGMI_PROJECT_ID
-
-const networks = [sepolia] as [typeof sepolia];
-
-const metadata = {
-  name: "dX",
-  description: "Decentralized Q&A Platform",
-  url: "https://anonqa0.netlify.app/", // origin must match your domain & subdomain
-  icons: [],
-};
-
-createAppKit({
-  adapters: [new EthersAdapter()],
-  networks,
-  metadata,
-  projectId,
-  features: {
-    analytics: true,
-    email: false,
-    socials: false,
-  },
-  themeVariables: {
-    '--w3m-accent': '#0059b3',
-    '--w3m-font-family': "'Arial', sans-serif",
-    '--w3m-color-mix': '#ffffff',
-    '--w3m-color-mix-strength': 0,
-    '--w3m-font-size-master': '11px',
-    '--w3m-border-radius-master': '1px',
-    '--w3m-z-index': 1000,
-  },
-});
+import { ConnectKitButton } from "connectkit";
+import { Wallet, Loader2 } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 export const CustomConnectButton = () => {
+  const { theme } = useTheme();
+
   return (
-    <appkit-button 
-      label="Connect Wallet"
-      loadingLabel="Connecting..."
-      size="md" 
-      // balance="hide"
-    />
+    <ConnectKitButton.Custom>
+      {({ isConnected, isConnecting, show, truncatedAddress, ensName }) => (
+        <button
+          onClick={show}
+          className={`
+            flex items-center gap-2 px-3 py-2 rounded-lg transition text-xs
+            ${theme === "dark"
+              ? "bg-primary text-primary-foreground hover:bg-primary/80"
+              : "bg-black text-white hover:bg-gray-800"}
+            shadow-md
+          `}
+          style={{ minWidth: 100 }}
+        >
+          {isConnecting ? (
+            <>
+              <Loader2 className="animate-spin h-5 w-5" />
+              Connecting...
+            </>
+          ) : isConnected ? (
+            <>
+              <Wallet className="h-5 w-5" />
+              {ensName || truncatedAddress}
+            </>
+          ) : (
+            <>
+              <Wallet className="h-5 w-5" />
+              Connect Wallet
+            </>
+          )}
+        </button>
+      )}
+    </ConnectKitButton.Custom>
   );
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useAccount } from "wagmi";
 import { useAddComment } from "@/services/dXService";
 import { Button } from "@/components/ui/button";
 import { RichTextArea } from "./RichTextArea";
@@ -14,7 +14,7 @@ interface CommentFormProps {
 
 export const CommentForm = ({ postId, onCommentAdded }: CommentFormProps) => {
   const [comment, setComment] = useState("");
-  const { isConnected } = useAppKitAccount();
+  const { isConnected } = useAccount();
   const [resetKey, setResetKey] = useState(0);
   const { addComment, isPending, isSuccess, isError, isConfirming, isConfirmed, hash } = useAddComment();
   const [hasShownSuccess, setHasShownSuccess] = useState(false);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { PostCard } from "@/components/PostCard";
-import { useAppKitAccount } from "@reown/appkit/react";
+import { useAccount } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, ArrowUpDown, Wallet, MessageSquare, ArrowRight } from "lucide-react";
@@ -10,7 +10,7 @@ import { usePosts } from "@/hooks/usePosts";
 
 export const MyPostsPage = () => {
   const navigate = useNavigate();
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useAccount();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const { allPosts, isAllPostLoading } = usePosts();
