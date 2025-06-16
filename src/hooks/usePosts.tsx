@@ -22,7 +22,6 @@ export const usePosts = () => {
     functionName: "getAllPosts",
   });
 
-  console.log("allPostInfos: ", allPostInfo);
 
   useEffect(() => {
     if (!isAllPostInfoLoading) {

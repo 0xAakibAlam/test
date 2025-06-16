@@ -132,8 +132,6 @@ export const useGetUserComments = (owner: string) => {
     args: [postId],
   });
 
-  console.log("commentInfos", commentInfos);
-
   useEffect(() => {
     if (!numOfPosts || !owner || !commentInfos || !postId) return;
 

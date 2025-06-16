@@ -16,7 +16,7 @@ export const MyPostsPage = () => {
   const { allPosts, isAllPostLoading } = usePosts();
 
   const myPosts = allPosts.filter((post) => {
-    return post.owner.toLowerCase() === address;
+    return post.owner.toLowerCase() === address?.toLowerCase();
   })
 
   // Filter posts based on search term

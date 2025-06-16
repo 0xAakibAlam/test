@@ -48,7 +48,6 @@ const renderElement = (props: any) => {
         </a>
       );
     default:
-      console.log("children: ", children);
       const isEmpty = !children || (Array.isArray(children) && children.every(child => !child.props.children));
       return <p style={{...style}} className="my-2 text-sm md:text-lg" {...attributes}>{isEmpty ? <br /> : children}</p>;
   }
