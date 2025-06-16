@@ -35,7 +35,7 @@ export const useAddPost = () => {
         chain: sepolia,
       });
 
-      openWalletApp();
+      // openWalletApp();
     } catch (error: any) {
       console.error("Error in addPost:", error);
       // Handle specific mobile wallet errors
@@ -79,7 +79,7 @@ export const useAddComment = () => {
         chain: sepolia,
       });
 
-      openWalletApp();
+      // openWalletApp();
     } catch (error: any) {
       console.error("Error in addComment:", error);
       // Handle specific mobile wallet errors
